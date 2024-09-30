@@ -62,7 +62,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/deregister")
+    @PostMapping("/logout")
     public ResponseEntity<?> deregisterSession(@RequestBody Map<String, String> tokenPayload) {
         System.out.println("Incoming payload: " + tokenPayload);
         if (tokenPayload != null && !tokenPayload.isEmpty()) {
