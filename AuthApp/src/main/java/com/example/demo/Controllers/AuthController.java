@@ -54,10 +54,11 @@ public class AuthController {
     }
 
     @GetMapping("/signup/check")
-    public ResponseEntity<?> checkUsername(@RequestParam String username) {
-        Optional<User> existingUser = userService.findByUsername(username);
-        if (existingUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already taken");
+    public ResponseEntity<?> checkUsername(@RequestParam String username, @RequestParam String email) {
+        Optional<User> existingUsername = userService.findByUsername(username);
+        Optional<User> existingEmail = userService.findByEmail(email);
+        if (existingUsername.isPresent() || existingEmail.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username/Email already taken");
         }
         return ResponseEntity.ok().build();
     }
