@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+* TODO: Rearrange fields for convenience and neatness
+* */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

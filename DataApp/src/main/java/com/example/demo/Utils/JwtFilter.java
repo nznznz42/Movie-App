@@ -14,6 +14,10 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
+/*
+* TODO: make it functional
+* */
+
 public class JwtFilter extends GenericFilterBean {
 
     @Autowired

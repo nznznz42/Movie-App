@@ -6,71 +6,46 @@ import com.example.demo.Models.CMovie;
 import com.example.demo.Requests.HomeCategory;
 import com.example.demo.Requests.HomeCategoryPacket;
 import com.example.demo.Requests.HomeResponse;
+import com.example.demo.Services.HomeService;
 import info.movito.themoviedbapi.TmdbApi;
 
 import info.movito.themoviedbapi.model.core.Movie;
 import info.movito.themoviedbapi.model.movies.MovieDb;
 import info.movito.themoviedbapi.tools.TmdbException;
 import info.movito.themoviedbapi.tools.appendtoresponse.MovieAppendToResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+/*
+* TODO: Set up correct error handling and status responses, maybe refactor for added performance
+* */
 
 @RestController
 @RequestMapping("/home")
 @CrossOrigin(originPatterns = "*")
 public class HomeController {
 
-    private final TmdbApiKey apiKey;
-    private final TmdbApi api;
-
-    public HomeController(TmdbApiKey apiKey) {
-        this.apiKey = apiKey;
-        this.api = new TmdbApi(apiKey.apiKey());
-    }
+    @Autowired
+    private HomeService homeService;
 
     @GetMapping
-    public HomeResponse getMoviesForHomePage() throws TmdbException {
-        List<Movie> nowPlayingApi = api.getMovieLists().getNowPlaying("en-US", 1, "US").getResults();
-        List<Movie> upcomingApi = api.getMovieLists().getUpcoming("en-US", 1, "US").getResults();
-        List<Movie> popularApi = api.getMovieLists().getPopular("en-US", 1, "US").getResults();
-        List<Movie> topRatedApi = api.getMovieLists().getTopRated("en-US", 1, "US").getResults();
+    public HomeResponse getMoviesForHomePage() throws TmdbException, ExecutionException, InterruptedException {
+        CompletableFuture<List<CMovie>> upcomingMovies = homeService.fetchUpcoming(1);
+        CompletableFuture<List<CMovie>> nowPlayingMovies = homeService.fetchNowPlaying(1);
+        CompletableFuture<List<CMovie>> popularMovies = homeService.fetchPopular(1);
+        CompletableFuture<List<CMovie>> topRatedMovies = homeService.fetchTopRated(1);
 
-        List<CMovie> nowPlayingMovies = new ArrayList<>();
+        CompletableFuture.allOf(upcomingMovies, nowPlayingMovies, popularMovies, topRatedMovies).join();
 
-        for(Movie movie: nowPlayingApi) {
-            MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
-            nowPlayingMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
-        }
-        HomeCategoryPacket nowPlaying = new HomeCategoryPacket(HomeCategory.NOW_PLAYING, nowPlayingMovies);
-
-        List<CMovie> upcomingMovies = new ArrayList<>();
-
-        for(Movie movie: upcomingApi) {
-            MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
-            upcomingMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
-        }
-
-        HomeCategoryPacket upcoming = new HomeCategoryPacket(HomeCategory.UPCOMING, upcomingMovies);
-
-        List<CMovie> popularMovies = new ArrayList<>();
-
-        for(Movie movie: popularApi) {
-            MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
-            popularMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
-        }
-
-        HomeCategoryPacket popular = new HomeCategoryPacket(HomeCategory.POPULAR, popularMovies);
-
-        List<CMovie> topRatedMovies = new ArrayList<>();
-
-        for(Movie movie: topRatedApi) {
-            MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
-            topRatedMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
-        }
-
-        HomeCategoryPacket topRated = new HomeCategoryPacket(HomeCategory.TOP_RATED, topRatedMovies);
+        HomeCategoryPacket nowPlaying = new HomeCategoryPacket(HomeCategory.NOW_PLAYING, nowPlayingMovies.get());
+        HomeCategoryPacket upcoming = new HomeCategoryPacket(HomeCategory.UPCOMING, upcomingMovies.get());
+        HomeCategoryPacket popular = new HomeCategoryPacket(HomeCategory.POPULAR, popularMovies.get());
+        HomeCategoryPacket topRated = new HomeCategoryPacket(HomeCategory.TOP_RATED, topRatedMovies.get());
 
         List<HomeCategoryPacket> packets = new ArrayList<>();
         packets.add(nowPlaying);
@@ -82,55 +57,39 @@ public class HomeController {
     }
 
     @GetMapping("/upcoming")
-    public List<CMovie> getUpcoming(@RequestParam(value = "page") int page) throws TmdbException {
-        List<Movie> upcomingApi = api.getMovieLists().getUpcoming("en-US", page, "US").getResults();
-        List<CMovie> upcomingMovies = new ArrayList<>();
+    public List<CMovie> getUpcomingMovies(@RequestParam(value = "page") int page) throws ExecutionException, InterruptedException, TmdbException {
+        CompletableFuture<List<CMovie>> upcomingMovies = homeService.fetchUpcoming(page);
+        CompletableFuture.allOf(upcomingMovies).join();
 
-        for(Movie movie: upcomingApi) {
-            MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
-            upcomingMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
-        }
-
-        return upcomingMovies;
+        List<CMovie> upcoming = upcomingMovies.get();
+        return upcoming;
     }
 
     @GetMapping("/top-rated")
-    public List<CMovie> getTopRated(@RequestParam(value = "page") int page) throws TmdbException {
-        List<Movie> topRatedApi = api.getMovieLists().getTopRated("en-US", page, "US").getResults();
-        List<CMovie> topRatedMovies = new ArrayList<>();
+    public List<CMovie> getTopRated(@RequestParam(value = "page") int page) throws TmdbException, ExecutionException, InterruptedException {
+        CompletableFuture<List<CMovie>> topRatedMovies = homeService.fetchTopRated(page);
+        CompletableFuture.allOf(topRatedMovies).join();
 
-        for(Movie movie: topRatedApi) {
-            MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
-            topRatedMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
-        }
-
-        return topRatedMovies;
+        List<CMovie> topRated = topRatedMovies.get();
+        return topRated;
     }
 
     @GetMapping("/popular")
-    public List<CMovie> getPopular(@RequestParam(value = "page") int page) throws TmdbException {
-        List<Movie> popularApi = api.getMovieLists().getPopular("en-US", page, "US").getResults();
-        List<CMovie> popularMovies = new ArrayList<>();
+    public List<CMovie> getPopular(@RequestParam(value = "page") int page) throws TmdbException, ExecutionException, InterruptedException {
+        CompletableFuture<List<CMovie>> popularMovies = homeService.fetchPopular(page);
+        CompletableFuture.allOf(popularMovies).join();
 
-        for(Movie movie: popularApi) {
-            MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
-            popularMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
-        }
-
-        return popularMovies;
+        List<CMovie> popular = popularMovies.get();
+        return popular;
     }
 
     @GetMapping("/now-playing")
-    public List<CMovie> getNowPlaying(@RequestParam(value = "page") int page) throws TmdbException {
-        List<Movie> nowPlayingApi = api.getMovieLists().getNowPlaying("en-US", page, "US").getResults();
-        List<CMovie> nowPlayingMovies = new ArrayList<>();
+    public List<CMovie> getNowPlaying(@RequestParam(value = "page") int page) throws TmdbException, ExecutionException, InterruptedException {
+        CompletableFuture<List<CMovie>> nowPlayingMovies = homeService.fetchNowPlaying(page);
+        CompletableFuture.allOf(nowPlayingMovies).join();
 
-        for(Movie movie: nowPlayingApi) {
-            MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
-            nowPlayingMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
-        }
-
-        return nowPlayingMovies;
+        List<CMovie> nowPlaying = nowPlayingMovies.get();
+        return nowPlaying;
     }
 
 }
