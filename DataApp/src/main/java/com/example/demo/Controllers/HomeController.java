@@ -1,18 +1,13 @@
 package com.example.demo.Controllers;
 
-
-import com.example.demo.Configs.TmdbApiKey;
 import com.example.demo.Models.CMovie;
 import com.example.demo.Requests.HomeCategory;
 import com.example.demo.Requests.HomeCategoryPacket;
 import com.example.demo.Requests.HomeResponse;
 import com.example.demo.Services.HomeService;
-import info.movito.themoviedbapi.TmdbApi;
 
-import info.movito.themoviedbapi.model.core.Movie;
-import info.movito.themoviedbapi.model.movies.MovieDb;
 import info.movito.themoviedbapi.tools.TmdbException;
-import info.movito.themoviedbapi.tools.appendtoresponse.MovieAppendToResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

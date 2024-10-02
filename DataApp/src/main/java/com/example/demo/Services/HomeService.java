@@ -28,7 +28,7 @@ public class HomeService {
         List<Movie> upcomingApi = api.getMovieLists().getUpcoming("en-US", page, "US").getResults();
         List<CMovie> upcomingMovies = new ArrayList<>();
 
-        for(Movie movie: upcomingApi) {
+        for (Movie movie : upcomingApi) {
             MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
             upcomingMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
         }
@@ -41,7 +41,7 @@ public class HomeService {
         List<Movie> popularApi = api.getMovieLists().getPopular("en-US", page, "US").getResults();
         List<CMovie> popularMovies = new ArrayList<>();
 
-        for(Movie movie: popularApi) {
+        for (Movie movie : popularApi) {
             MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
             popularMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
         }
@@ -54,7 +54,7 @@ public class HomeService {
         List<Movie> topRatedApi = api.getMovieLists().getTopRated("en-US", page, "US").getResults();
         List<CMovie> topRatedMovies = new ArrayList<>();
 
-        for(Movie movie: topRatedApi) {
+        for (Movie movie : topRatedApi) {
             MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
             topRatedMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
         }
@@ -67,7 +67,7 @@ public class HomeService {
         List<Movie> nowPlayingApi = api.getMovieLists().getTopRated("en-US", page, "US").getResults();
         List<CMovie> nowPlayingMovies = new ArrayList<>();
 
-        for(Movie movie: nowPlayingApi) {
+        for (Movie movie : nowPlayingApi) {
             MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
             nowPlayingMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
         }
