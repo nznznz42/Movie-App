@@ -3,8 +3,9 @@ package com.example.demo.Controllers;
 import com.example.demo.Models.AccountDetails;
 import com.example.demo.Models.Watchlist;
 import com.example.demo.Services.AccountService;
-import info.movito.themoviedbapi.tools.TmdbException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,28 +16,43 @@ public class AccountController {
     private AccountService accountService;
 
     @GetMapping
-    public AccountDetails getUserAccount(@RequestParam String username) {
-        return accountService.getAccountByUsername(username);
+    public ResponseEntity<AccountDetails> getUserAccount(@RequestParam String username) throws Exception {
+        AccountDetails account = accountService.getAccountByUsername(username);
+        if (account == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/add-watchlist")
-    public AccountDetails addWatchList(@RequestParam String username, @RequestParam String watchlistName) {
+    public ResponseEntity<AccountDetails> addWatchList(@RequestParam String username, @RequestParam String watchlistName) throws Exception {
         Watchlist watchlist = new Watchlist(watchlistName);
-        return accountService.addWatchlist(username, watchlist);
+        AccountDetails account = accountService.addWatchlist(username, watchlist);
+        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/delete-watchlist")
-    public AccountDetails deleteWatchlist(@RequestParam String username, @RequestParam String watchlistName) {
-        return accountService.deleteWatchlist(username, watchlistName);
+    public ResponseEntity<AccountDetails> deleteWatchlist(@RequestParam String username, @RequestParam String watchlistName) throws Exception {
+        AccountDetails account = accountService.deleteWatchlist(username, watchlistName);
+        if (account == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/add-movie")
-    public AccountDetails addMovieToWatchlist(@RequestParam String username, @RequestParam String watchlistname, @RequestParam int id) throws TmdbException {
-        return accountService.addMovieToWatchlist(username, watchlistname, id);
+    public ResponseEntity<AccountDetails> addMovieToWatchlist(@RequestParam String username, @RequestParam String watchlistname, @RequestParam int id) throws Exception {
+        AccountDetails account = accountService.addMovieToWatchlist(username, watchlistname, id);
+        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/delete-movie")
-    public AccountDetails deleteMovieFromWatchList(@RequestParam String username, @RequestParam String watchlistname, @RequestParam int id) {
-        return accountService.deleteMovieFromWatchlist(username, watchlistname, id);
+    public ResponseEntity<AccountDetails> deleteMovieFromWatchList(@RequestParam String username, @RequestParam String watchlistname, @RequestParam int id) throws Exception {
+        AccountDetails account = accountService.deleteMovieFromWatchlist(username, watchlistname, id);
+        if (account == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(account);
     }
 }
+

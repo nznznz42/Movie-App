@@ -6,19 +6,16 @@ import com.example.demo.Requests.HomeCategoryPacket;
 import com.example.demo.Requests.HomeResponse;
 import com.example.demo.Services.HomeService;
 
-import info.movito.themoviedbapi.tools.TmdbException;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
-/*
-* TODO: Set up correct error handling and status responses, maybe refactor for added performance
-* */
 
 @RestController
 @RequestMapping("/home")
@@ -29,7 +26,7 @@ public class HomeController {
     private HomeService homeService;
 
     @GetMapping
-    public HomeResponse getMoviesForHomePage() throws TmdbException, ExecutionException, InterruptedException {
+    public ResponseEntity<HomeResponse> getMoviesForHomePage() throws Exception {
         CompletableFuture<List<CMovie>> upcomingMovies = homeService.fetchUpcoming(1);
         CompletableFuture<List<CMovie>> nowPlayingMovies = homeService.fetchNowPlaying(1);
         CompletableFuture<List<CMovie>> popularMovies = homeService.fetchPopular(1);
@@ -48,43 +45,36 @@ public class HomeController {
         packets.add(popular);
         packets.add(topRated);
 
-        return new HomeResponse(packets);
+        return ResponseEntity.ok(new HomeResponse(packets));
     }
 
     @GetMapping("/upcoming")
-    public List<CMovie> getUpcomingMovies(@RequestParam(value = "page") int page) throws ExecutionException, InterruptedException, TmdbException {
+    public ResponseEntity<List<CMovie>> getUpcomingMovies(@RequestParam(value = "page") int page) throws Exception {
         CompletableFuture<List<CMovie>> upcomingMovies = homeService.fetchUpcoming(page);
         CompletableFuture.allOf(upcomingMovies).join();
-
-        List<CMovie> upcoming = upcomingMovies.get();
-        return upcoming;
+        return ResponseEntity.ok(upcomingMovies.get());
     }
 
     @GetMapping("/top-rated")
-    public List<CMovie> getTopRated(@RequestParam(value = "page") int page) throws TmdbException, ExecutionException, InterruptedException {
+    public ResponseEntity<List<CMovie>> getTopRated(@RequestParam(value = "page") int page) throws Exception {
         CompletableFuture<List<CMovie>> topRatedMovies = homeService.fetchTopRated(page);
         CompletableFuture.allOf(topRatedMovies).join();
-
-        List<CMovie> topRated = topRatedMovies.get();
-        return topRated;
+        return ResponseEntity.ok(topRatedMovies.get());
     }
 
     @GetMapping("/popular")
-    public List<CMovie> getPopular(@RequestParam(value = "page") int page) throws TmdbException, ExecutionException, InterruptedException {
+    public ResponseEntity<List<CMovie>> getPopular(@RequestParam(value = "page") int page) throws Exception {
         CompletableFuture<List<CMovie>> popularMovies = homeService.fetchPopular(page);
         CompletableFuture.allOf(popularMovies).join();
-
-        List<CMovie> popular = popularMovies.get();
-        return popular;
+        return ResponseEntity.ok(popularMovies.get());
     }
 
     @GetMapping("/now-playing")
-    public List<CMovie> getNowPlaying(@RequestParam(value = "page") int page) throws TmdbException, ExecutionException, InterruptedException {
+    public ResponseEntity<List<CMovie>> getNowPlaying(@RequestParam(value = "page") int page) throws Exception {
         CompletableFuture<List<CMovie>> nowPlayingMovies = homeService.fetchNowPlaying(page);
         CompletableFuture.allOf(nowPlayingMovies).join();
-
-        List<CMovie> nowPlaying = nowPlayingMovies.get();
-        return nowPlaying;
+        return ResponseEntity.ok(nowPlayingMovies.get());
     }
-
 }
+
+
