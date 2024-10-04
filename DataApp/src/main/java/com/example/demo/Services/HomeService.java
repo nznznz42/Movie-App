@@ -25,7 +25,7 @@ public class HomeService {
 
     @Async
     public CompletableFuture<List<CMovie>> fetchUpcoming(int page) throws TmdbException {
-        List<Movie> upcomingApi = api.getMovieLists().getUpcoming("en-US", page, "US").getResults();
+        List<Movie> upcomingApi = api.getMovieLists().getUpcoming(null, page, null).getResults();
         List<CMovie> upcomingMovies = new ArrayList<>();
 
         for (Movie movie : upcomingApi) {
@@ -38,7 +38,7 @@ public class HomeService {
 
     @Async
     public CompletableFuture<List<CMovie>> fetchPopular(int page) throws TmdbException {
-        List<Movie> popularApi = api.getMovieLists().getPopular("en-US", page, "US").getResults();
+        List<Movie> popularApi = api.getMovieLists().getPopular(null, page, null).getResults();
         List<CMovie> popularMovies = new ArrayList<>();
 
         for (Movie movie : popularApi) {
@@ -51,7 +51,7 @@ public class HomeService {
 
     @Async
     public CompletableFuture<List<CMovie>> fetchTopRated(int page) throws TmdbException {
-        List<Movie> topRatedApi = api.getMovieLists().getTopRated("en-US", page, "US").getResults();
+        List<Movie> topRatedApi = api.getMovieLists().getTopRated(null, page, null).getResults();
         List<CMovie> topRatedMovies = new ArrayList<>();
 
         for (Movie movie : topRatedApi) {
@@ -64,7 +64,7 @@ public class HomeService {
 
     @Async
     public CompletableFuture<List<CMovie>> fetchNowPlaying(int page) throws TmdbException {
-        List<Movie> nowPlayingApi = api.getMovieLists().getTopRated("en-US", page, "US").getResults();
+        List<Movie> nowPlayingApi = api.getMovieLists().getTopRated(null, page, null).getResults();
         List<CMovie> nowPlayingMovies = new ArrayList<>();
 
         for (Movie movie : nowPlayingApi) {
