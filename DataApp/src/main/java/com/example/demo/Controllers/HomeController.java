@@ -5,11 +5,7 @@ import com.example.demo.Requests.HomeCategory;
 import com.example.demo.Requests.HomeCategoryPacket;
 import com.example.demo.Requests.HomeResponse;
 import com.example.demo.Services.HomeService;
-
-
-
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

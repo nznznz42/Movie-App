@@ -28,7 +28,7 @@ public class SearchService {
         List<Movie> movieResultsApi = api.getSearch().searchMovie(query, true, language, null, page, null, year).getResults();
         List<CMovie> movieResults = new ArrayList<>();
 
-        for(Movie movie: movieResultsApi) {
+        for (Movie movie : movieResultsApi) {
             MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), null, MovieAppendToResponse.VIDEOS);
             movieResults.add(CMovie.convertMovieDbToMovie(movieDetails));
         }
@@ -43,7 +43,7 @@ public class SearchService {
         List<Movie> movieResultsApi = api.getDiscover().getMovie(paramBuilder).getResults();
         List<CMovie> movieResults = new ArrayList<>();
 
-        for(Movie movie: movieResultsApi) {
+        for (Movie movie : movieResultsApi) {
             MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), null, MovieAppendToResponse.VIDEOS);
             movieResults.add(CMovie.convertMovieDbToMovie(movieDetails));
         }

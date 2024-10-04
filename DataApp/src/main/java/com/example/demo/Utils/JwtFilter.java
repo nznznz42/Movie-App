@@ -15,8 +15,8 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 
 /*
-* TODO: make it functional
-* */
+ * TODO: make it functional
+ * */
 
 public class JwtFilter extends GenericFilterBean {
 
@@ -26,9 +26,8 @@ public class JwtFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
                          FilterChain filterChain)
-            throws IOException, ServletException
-    {
-        HttpServletRequest request=(HttpServletRequest) servletRequest;
+            throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
         String path = request.getRequestURI();
 
         if (path.equals("/session/register")) {
@@ -36,23 +35,22 @@ public class JwtFilter extends GenericFilterBean {
             return;
         }
 
-        String authHeader=request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new ServletException("Missing or invalid Authorization header");
-        }
-        else{
-            String token=authHeader.substring(7);
+        } else {
+            String token = authHeader.substring(7);
             if (!sessionController.getTokenStore().contains(token)) {
                 throw new ServletException("Unauthorized: Token not registered");
             }
-            Claims claims= Jwts.parser().setSigningKey("AuthSecret").parseClaimsJws(token).getBody();
-            String emailId=(String)claims.get("currentUserEmailId");
-            String name=(String)claims.get("currentUserName");
+            Claims claims = Jwts.parser().setSigningKey("AuthSecret").parseClaimsJws(token).getBody();
+            String emailId = (String) claims.get("currentUserEmailId");
+            String name = (String) claims.get("currentUserName");
 
 
-            request.setAttribute("emailId",emailId);
-            request.setAttribute("userName",name);
-            filterChain.doFilter(request,servletResponse);
+            request.setAttribute("emailId", emailId);
+            request.setAttribute("userName", name);
+            filterChain.doFilter(request, servletResponse);
         }
     }
 }

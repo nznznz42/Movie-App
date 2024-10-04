@@ -15,10 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AccountService {
+    private final TmdbApi api;
     @Autowired
     private AccountRepository accountRepository;
-
-    private final TmdbApi api;
 
     public AccountService(TmdbApiKey apiKey) {
         this.api = new TmdbApi(apiKey.apiKey());

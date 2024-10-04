@@ -33,7 +33,7 @@ public class MovieService {
         List<Movie> similarMoviesApi = api.getMovies().getSimilar(id, "en-US", page).getResults();
         List<CMovie> similarMovies = new ArrayList<>();
 
-        for(Movie movie: similarMoviesApi) {
+        for (Movie movie : similarMoviesApi) {
             MovieDb movieDetails = api.getMovies().getDetails(movie.getId(), "en-US", MovieAppendToResponse.VIDEOS);
             similarMovies.add(CMovie.convertMovieDbToMovie(movieDetails));
         }

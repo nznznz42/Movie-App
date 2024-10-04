@@ -1,7 +1,6 @@
 package com.example.demo.Models;
 
 import info.movito.themoviedbapi.model.core.Genre;
-import info.movito.themoviedbapi.model.core.Movie;
 import info.movito.themoviedbapi.model.core.ProductionCountry;
 import info.movito.themoviedbapi.model.core.video.Video;
 import info.movito.themoviedbapi.model.movies.MovieDb;
@@ -12,10 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-
-/*
-* TODO: Rearrange fields for convenience and neatness
-* */
 
 @Data
 @NoArgsConstructor
@@ -44,7 +39,7 @@ public class CMovie {
         List<Genre> genres = movieDb.getGenres();
         List<String> genres_str = new ArrayList<>();
 
-        for(Genre genre: genres) {
+        for (Genre genre : genres) {
             genres_str.add(genre.getName());
         }
 
@@ -53,8 +48,8 @@ public class CMovie {
         List<Video> videos = movieDb.getVideos().getResults();
         List<String> trailers = new ArrayList<>();
 
-        for(Video video: videos) {
-            if(video.getType().equals("Trailer")  && video.getSite().equals("YouTube") && video.getOfficial()) {
+        for (Video video : videos) {
+            if (video.getType().equals("Trailer") && video.getSite().equals("YouTube") && video.getOfficial()) {
                 trailers.add(video.getKey());
             }
         }
@@ -64,7 +59,7 @@ public class CMovie {
         List<ProductionCountry> prodCountries = movieDb.getProductionCountries();
         List<String> countries = new ArrayList<>();
 
-        for(ProductionCountry country: prodCountries) {
+        for (ProductionCountry country : prodCountries) {
             countries.add(country.getName());
         }
 
