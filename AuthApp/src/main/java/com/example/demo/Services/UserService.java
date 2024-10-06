@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface UserService {
     User addUser(User user) throws EmailAlreadyExistingException;
 
-    User loginUser(String username, String password) throws EmailIdNotFoundException;
+    User loginUser(String email, String password) throws EmailIdNotFoundException;
 
     Optional<User> findByUsername(String username);
 

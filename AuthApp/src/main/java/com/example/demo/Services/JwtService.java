@@ -1,4 +1,4 @@
-package com.example.demo.Utils;
+package com.example.demo.Services;
 
 import com.example.demo.Models.User;
 import io.jsonwebtoken.Jwts;
@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class GenerateJwtImpl implements GenerateJwt{
-    @Override
+public class JwtService {
+
     public Map<String, String> generateToken(User user) {
         Map<String,String> result = new HashMap<String,String>();
         Map<String,Object> claims = new HashMap<String,Object>();
@@ -28,4 +28,5 @@ public class GenerateJwtImpl implements GenerateJwt{
         result.put("message","Login success");
         return result;
     }
+
 }

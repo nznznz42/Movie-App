@@ -25,8 +25,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User loginUser(String username, String password) throws EmailIdNotFoundException {
-        return userRepository.findByUsername(username)
+    public User loginUser(String email, String password) throws EmailIdNotFoundException {
+        return userRepository.findByEmail(email)
                 .filter(user -> user.getPassword().equals(password))
                 .orElseThrow(EmailIdNotFoundException::new);
     }
