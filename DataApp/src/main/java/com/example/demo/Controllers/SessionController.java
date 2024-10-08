@@ -1,5 +1,6 @@
 package com.example.demo.Controllers;
 
+import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -7,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Getter
 @RestController
 @RequestMapping("/session")
 @CrossOrigin(originPatterns = "*")
@@ -34,7 +36,4 @@ public class SessionController {
         return ResponseEntity.badRequest().body("Invalid token");
     }
 
-    public Set<String> getTokenStore() {
-        return tokenStore;
-    }
 }

@@ -32,7 +32,8 @@ public class AccountService {
         if(accountRepository.existsByUsernameAndEmail(username, email)) {
             throw new IllegalArgumentException("Account already exists");
         }
-        return accountRepository.addAccount(username, email);
+        AccountDetails account = new AccountDetails(username, email);
+        return accountRepository.save(account);
     }
 
     @Transactional
