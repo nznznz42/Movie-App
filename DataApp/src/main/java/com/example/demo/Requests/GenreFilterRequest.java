@@ -12,4 +12,5 @@ import java.util.List;
 public class GenreFilterRequest {
     private List<Integer> genres;
     private Boolean orQuery;
+    private int pageNumber;
 }

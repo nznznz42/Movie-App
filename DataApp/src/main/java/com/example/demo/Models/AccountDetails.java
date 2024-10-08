@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "Accounts")
@@ -17,5 +18,12 @@ public class AccountDetails {
     private String username;
     private String email;
     private List<Watchlist> watchlists;
-    private String subscriptionType;
+    private SubscriptionType subscriptionType;
+
+    public AccountDetails(String username, String email) {
+        this.username = username;
+        this.email = email;
+        this.watchlists = new ArrayList<>();
+        this.subscriptionType = SubscriptionType.FREE;
+    }
 }

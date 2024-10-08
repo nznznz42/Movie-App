@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AccountRepository extends MongoRepository<AccountDetails, String> {
     AccountDetails findByUsername(String username);
-
+    AccountDetails addAccount(String username, String email);
+    boolean existsByUsernameAndEmail(String username, String email);
     boolean existsByUsernameAndWatchlists_Name(String username, String watchlistName);
 }

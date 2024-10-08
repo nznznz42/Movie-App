@@ -28,6 +28,14 @@ public class AccountService {
     }
 
     @Transactional
+    public AccountDetails addAccount(String username, String email) {
+        if(accountRepository.existsByUsernameAndEmail(username, email)) {
+            throw new IllegalArgumentException("Account already exists");
+        }
+        return accountRepository.addAccount(username, email);
+    }
+
+    @Transactional
     public AccountDetails addWatchlist(String username, Watchlist watchlist) throws IllegalArgumentException {
         if (accountRepository.existsByUsernameAndWatchlists_Name(username, watchlist.getName())) {
             throw new IllegalArgumentException("Watchlist name must be unique.");

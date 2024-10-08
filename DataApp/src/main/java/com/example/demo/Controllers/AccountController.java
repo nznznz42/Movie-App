@@ -27,6 +27,16 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
+    @GetMapping("/add-account")
+    public ResponseEntity<AccountDetails> addNewAccount(@RequestParam String username, @RequestParam String email) throws Exception {
+        AccountDetails account = accountService.addAccount(username, email);
+
+        if(account == null) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+        }
+        return ResponseEntity.ok(account);
+    }
+
     @GetMapping("/add-watchlist")
     public ResponseEntity<AccountDetails> addWatchList(@RequestParam String username, @RequestParam String watchlistName) throws Exception {
         Watchlist watchlist = new Watchlist(watchlistName);

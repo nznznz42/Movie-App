@@ -33,8 +33,9 @@ public class SearchController {
     public ResponseEntity<List<CMovie>> searchByGenres(@RequestBody GenreFilterRequest genreFilterRequest) throws Exception {
         List<Integer> genres = genreFilterRequest.getGenres();
         Boolean orQuery = genreFilterRequest.getOrQuery();
+        int page = genreFilterRequest.getPageNumber();
 
-        CompletableFuture<List<CMovie>> movies = searchService.searchByGenre(genres, orQuery);
+        CompletableFuture<List<CMovie>> movies = searchService.searchByGenre(genres, orQuery, page);
         CompletableFuture.allOf(movies).join();
 
         return ResponseEntity.ok(movies.get());
