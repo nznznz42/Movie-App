@@ -1,0 +1,78 @@
+import React, { useContext, useState } from 'react';
+import { AppBar, Toolbar, Typography, Box, Button, Drawer, IconButton } from '@mui/material';
+import SearchBar from './SearchBar';
+import LoginFormModal from './LoginFormModal';
+import ProfileIcon from './ProfileIcon';
+import MenuIcon from '@mui/icons-material/Menu'; 
+import { useNavigate } from 'react-router-dom';
+import SearchFilter from './SearchFilter';
+
+
+function Header({loginStatus, loginToggle}) {
+  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const HandleLogoClick = () => {
+    navigate('/');
+  };
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const drawerWidth = 240; 
+
+  return (
+    <>
+      <AppBar position="static" sx={{ backgroundColor: '#141414' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Button onClick={HandleLogoClick} sx={{ textTransform: 'none', p: 0 }}>
+            <Typography 
+              variant="h6" 
+              sx={{ color: 'red', fontFamily: 'Protest Guerrilla, sans-serif', fontWeight: 500, fontSize: '1cm' }}>
+              MUZIX
+            </Typography>
+          </Button>
+          <IconButton 
+            sx={{ display: { xs: 'block', md: 'none' } }} 
+            onClick={toggleDrawer}
+            color="inherit"
+          >
+            <MenuIcon />
+          </IconButton>
+          
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
+          </Box>
+
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+            <SearchBar />
+            <SearchFilter/>
+            {!loginStatus ? <LoginFormModal loginStatus={loginStatus} loginToggle={loginToggle} /> : <ProfileIcon loginToggle={loginToggle}/>}
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      <Drawer
+        anchor="left"
+        open={drawerOpen}
+        onClose={toggleDrawer}
+        sx={{ width: drawerWidth, flexShrink: 0 }}
+      >
+        <Box
+          sx={{ width: drawerWidth }}
+          role="presentation"
+          onClick={toggleDrawer}
+          onKeyDown={toggleDrawer}
+        >
+          <Box sx={{ p: 2 }}>
+            <SearchBar />
+            <SearchFilter/>
+            {!loginStatus ? <LoginFormModal loginStatus={loginStatus} loginToggle={loginToggle} /> : <ProfileIcon loginToggle={loginToggle} />}
+          </Box>
+        </Box>
+      </Drawer>
+    </>
+  );
+}
+
+export default Header;

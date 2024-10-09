@@ -1,0 +1,55 @@
+import React, { useContext, useState } from 'react';
+import { Avatar, Tooltip, Menu, MenuItem } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
+
+export default function ProfileIcon({loginToggle}) {
+    const {logout} = useAuth();
+    const [anchorEl, setAnchorEl] = useState(null);
+    const navigate=useNavigate();
+
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget); 
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null); 
+    };
+
+    const handleProfile = () => {
+        console.log("Profile clicked");
+        handleClose(); 
+    };
+
+    const handleLogout = async() => {
+        logout();
+        loginToggle(false)
+        navigate("/")
+    };
+
+    return (
+        <div>
+            <Tooltip title="Profile" arrow>
+                <Avatar 
+                    sx={{ 
+                        bgcolor: 'gray', 
+                        width: 36, 
+                        height: 36, 
+                        marginLeft: 2 
+                    }} 
+                    onClick={handleClick}
+                >
+                    P
+                </Avatar>
+            </Tooltip>
+            <Menu
+                anchorEl={anchorEl} 
+                open={Boolean(anchorEl)}
+                onClose={handleClose} 
+            >
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+        </div>
+    );
+}
