@@ -6,6 +6,7 @@ import com.example.demo.Models.User;
 import com.example.demo.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -39,6 +40,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User changeUserProfilePicture(String email, String filename) {
+        Optional<User> user = userRepository.findByEmail(email);
+        User existingUser = user.get();
+        existingUser.setProfileImageFileName(filename);
+        return userRepository.save(existingUser);
     }
 
 }

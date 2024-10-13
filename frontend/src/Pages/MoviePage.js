@@ -7,6 +7,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import AddIcon from '@mui/icons-material/Add';
 import './MovieView.css'; 
 import ScrollableList from '../Components/ScrollableList';
+import WatchlistPopup from '../Components/WatchlistPopup';
 
 const MoviePage = () => {
   const { id } = useParams();
@@ -71,6 +72,10 @@ const MoviePage = () => {
       player.stopVideo();
     }
   };
+
+  const handleAddButtonClick = () => {
+
+  }
 
   const onYouTubeIframeAPIReady = () => {
     const trailerId = movie?.trailers[0]; 
@@ -175,6 +180,7 @@ const MoviePage = () => {
       </div>
       <MovieDetails open={open} onClose={handleClose} movie={movie} />
       <ScrollableList header={"Similar"} movies={SimilarMovies}/>
+      <WatchlistPopup open={popupOpen} onClose={() => setPopupOpen(false)} movieId={id}/>
     </div>
   );
 };

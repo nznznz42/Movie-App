@@ -3,9 +3,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import Login from './Login'; 
 import CloseIcon from '@mui/icons-material/Close'; 
-import SignUpModal from './SignUpModal';
+import OTP from './OTP';
 
 const modalStyle = {
   position: 'fixed', 
@@ -31,19 +30,39 @@ const boxStyle = {
   overflow: 'auto', 
 };
 
-export default function LoginFormModal({loginStatus, loginToggle}) {
+export default function OtpFormModal({userData, profileImageFile}) {
   const [open, setOpen] = React.useState(false);
-  const [isLoginForm, setIsLoginForm] = React.useState(true); 
 
   const handleOpen = () => {
     setOpen(true);
-    setIsLoginForm(true); 
   };
 
   const handleClose = () => {
     setOpen(false);
-    setIsLoginForm(true);
   };
+
+  useEffect(() => {
+    // Function to send the OTP request
+    const sendOtp = async () => {
+      try {
+        const response = await axios.post('/signup/send-otp', null, {
+          params: {
+            email: userData.email,
+          },
+        });
+        if (response.status === 200) {
+          console.log('OTP sent successfully');
+        }
+      } catch (error) {
+        console.error('Error sending OTP:', error);
+      }
+    };
+
+    if (userData.email) {
+      sendOtp();
+    }
+  }, [userData.email]); 
+
 
   return (
     <div>
@@ -73,19 +92,7 @@ export default function LoginFormModal({loginStatus, loginToggle}) {
                 <CloseIcon /> 
               </Button>
             </Box>
-
-            {isLoginForm ? (
-              <Login loginStatus={loginStatus} loginToggle={loginToggle}/>  
-            ) : (
-              <SignUpModal />
-            )}
-
-            {isLoginForm && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>
-                <Typography sx={{marginRight:'5px'}}>Don't have an account ?</Typography>
-                <SignUpModal>Sign Up</SignUpModal> 
-              </Box>
-            )}
+            <OTP userData={userData} profileImageFile={profileImageFile} />
           </Box>
         </Box>
       </Modal>

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -36,6 +37,17 @@ public class SearchController {
         int page = genreFilterRequest.getPageNumber();
 
         CompletableFuture<List<CMovie>> movies = searchService.searchByGenre(genres, orQuery, page);
+        CompletableFuture.allOf(movies).join();
+
+        return ResponseEntity.ok(movies.get());
+    }
+
+    @GetMapping("/genre/{id}")
+    public ResponseEntity<List<CMovie>> searchForGenre(@PathVariable("id") int id, @RequestParam("page") int page) throws Exception {
+        List<Integer> genre = new ArrayList<>();
+        genre.add(id);
+
+        CompletableFuture<List<CMovie>> movies = searchService.searchByGenre(genre, false, page);
         CompletableFuture.allOf(movies).join();
 
         return ResponseEntity.ok(movies.get());

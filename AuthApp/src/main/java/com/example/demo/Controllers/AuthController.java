@@ -2,21 +2,17 @@ package com.example.demo.Controllers;
 
 import com.example.demo.Exceptions.EmailAlreadyExistingException;
 import com.example.demo.Exceptions.EmailIdNotFoundException;
+import com.example.demo.Models.EmailData;
 import com.example.demo.Models.LoginRequest;
 import com.example.demo.Models.User;
-import com.example.demo.Services.DataAppService;
-import com.example.demo.Services.FileService;
-import com.example.demo.Services.JwtService;
-import com.example.demo.Services.UserService;
+import com.example.demo.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -34,6 +30,13 @@ public class AuthController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private OtpService otpService;
+
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("profileImage") MultipartFile profileImage) throws IOException, EmailAlreadyExistingException {
@@ -81,6 +84,28 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/signup/send-otp")
+    public ResponseEntity<?> sendOTP(@RequestParam String email) {
+        int OTP = otpService.generateOtp(email);
+        EmailData emailData = new EmailData();
+        emailData.setSubject(email);
+        emailData.setMessageBody("Your One Time Password is: " + OTP);
+        emailData.setSubject("One Time Password");
+        emailService.sendEmail(emailData);
+        return ResponseEntity.ok().body(null);
+    }
+
+    @PostMapping("/signup/check-otp")
+    public ResponseEntity<?> checkOTP(@RequestParam String email, @RequestParam int otp) {
+        Boolean checkFlag = otpService.checkOtp(email, otp);
+        if(!checkFlag) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect OTP");
+        } else {
+            otpService.revokeOtp(email);
+            return ResponseEntity.ok().body(null);
+        }
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<?> deregisterSession(@RequestBody Map<String, String> tokenPayload) {
         System.out.println("Incoming payload: " + tokenPayload);
@@ -90,6 +115,13 @@ public class AuthController {
             return ResponseEntity.ok("Token deregistered successfully");
         }
         return ResponseEntity.badRequest().body("Invalid token");
+    }
+
+    @PostMapping("/change-avatar")
+    public ResponseEntity<?> changeProfilePicture(@RequestParam("email") String email, @RequestParam("profileImage") MultipartFile profileImage) throws IOException {
+        String filename = fileService.saveProfileImage(profileImage);
+        User user = userService.changeUserProfilePicture(email, filename);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/warm-up")

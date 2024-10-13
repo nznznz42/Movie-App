@@ -37,7 +37,7 @@ export default function Login({ loginStatus, loginToggle }) {
       const response = await axios.post(`http://localhost:8080/auth/login`, data);
       const token = response.data.token;
       const user=response.data.user;
-      login(token);
+      login(user, token);
       reset();
       setSnackbarMessage('Login successful');
       setSnackbarSeverity('success'); 

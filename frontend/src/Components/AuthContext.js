@@ -5,11 +5,14 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(localStorage.getItem('auth-token') || null);
+  const [currentUser, setCurrentUser] = useState(localStorage.getItem('current-user') || null);
 
-  const login = (token) => {
+  const login = (user, token) => {
     setAuthToken(token);
     localStorage.setItem('auth-token', token);
-    console.log(token)
+    setCurrentUser(user)
+    localStorage.setItem('current-user', user);
+    console.log(user)
   };
 
   const logout = async () => {
@@ -26,11 +29,13 @@ export const AuthProvider = ({ children }) => {
 
     setAuthToken(null);
     localStorage.removeItem('auth-token');
+    setCurrentUser(null)
+    localStorage.removeItem('current-user')
     console.log(authToken)
   };
 
   return (
-    <AuthContext.Provider value={{ authToken, login, logout }}>
+    <AuthContext.Provider value={{ authToken, currentUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

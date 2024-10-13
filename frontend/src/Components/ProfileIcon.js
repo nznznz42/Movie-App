@@ -17,7 +17,7 @@ export default function ProfileIcon({loginToggle}) {
     };
 
     const handleProfile = () => {
-        console.log("Profile clicked");
+        navigate('/profile')
         handleClose(); 
     };
 

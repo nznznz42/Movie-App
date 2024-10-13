@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-function MovieCard({ movie }) {
+function MovieCard({ movie, onDelete }) {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
 
@@ -55,6 +57,17 @@ function MovieCard({ movie }) {
           <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>{movie.title}</h3>
           <p style={{ margin: '5px 0', fontSize: '12px' }}>Release Date: {movie.release_date}</p>
           <p style={{ margin: '5px 0', fontSize: '12px' }}>Rating: {movie.vote_average}</p>
+          {onDelete && (
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation(); 
+                onDelete(movie.id);
+              }}
+              style={{ color: 'white', marginTop: '10px' }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )}
         </div>
       )}
     </div>

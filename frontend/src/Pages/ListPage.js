@@ -4,15 +4,22 @@ import { Button } from '@mui/material';
 import fetchMovieList from '../Components/MovieListFetcher';
 import getPageDetails from '../Components/PageType';
 
-const ListPage = ({pagetype}) => { 
+const ListPage = ({pagetype, genre, genreName}) => { 
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const pageDetails = getPageDetails(pagetype)
 
-  const fetchMovies = async (pageNumber) => {
+  const pageDetails = pagetype ? getPageDetails(pagetype) : null;
+
+  const fetchMovies = async(pageNumber) => {
     try {
-      const response = await fetchMovieList(pageDetails.url, pageNumber)
+      let response;
+      if (pagetype) {
+        response = await fetchMovieList(pageDetails.url, pageNumber);
+      } else if (genre) {
+        response = await fetchMovieList(`http://localhost:8081/search/genre/${genre}`, pageNumber);
+      }
+      console.log(response.data)
       setMovies(response.data);
     } catch (error) {
       console.error('Error fetching popular movies:', error);
@@ -22,8 +29,11 @@ const ListPage = ({pagetype}) => {
   };
 
   useEffect(() => {
-    fetchMovies(page);
-  }, [page]);
+    if (genre || pagetype) {
+      fetchMovies(page);  // Trigger API call when page or genre/pagetype changes
+    }
+  }, [page, genre, pagetype]);  // Add genre and pagetype to dependency array
+  
 
   const handleNextPage = () => {
     setPage(prevPage => prevPage + 1);
@@ -38,7 +48,7 @@ const ListPage = ({pagetype}) => {
   return (
     <div style={{ backgroundColor: '#141414', minHeight: '100vh'}}>
     <div style={{ padding: '12px', marginLeft:'3cm', marginRight:'3cm', backgroundColor: "#141414"}}>
-      <h1 style={{ color: 'white' }}>{pageDetails.header}</h1> 
+      {pageDetails ? <h1 style={{ color: 'white' }}>{pageDetails.header}</h1> : <h1 style={{ color: 'white' }}>{genreName}</h1>} 
       {loading ? (
         <div>Loading...</div>
       ) : (
@@ -74,3 +84,6 @@ const ListPage = ({pagetype}) => {
 };
 
 export default ListPage; 
+
+
+

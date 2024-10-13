@@ -9,11 +9,6 @@ const PageType = {
         url: "http://localhost:8081/home/popular"
     },
 
-    Recommended: {
-        header: "Recomended",
-        url: ""
-    },
-
     Upcoming: {
         header: "Upcoming",
         url: "http://localhost:8081/home/upcoming"

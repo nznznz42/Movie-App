@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { AppBar, Toolbar, Typography, Box, Button, Drawer, IconButton } from '@mui/material';
-import SearchBar from './SearchBar';
+import SearchIcon from '@mui/icons-material/Search';
 import LoginFormModal from './LoginFormModal';
 import ProfileIcon from './ProfileIcon';
 import MenuIcon from '@mui/icons-material/Menu'; 
@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import SearchFilter from './SearchFilter';
 
 
-function Header({loginStatus, loginToggle}) {
+function Header({loginStatus, loginToggle, genres, languages}) {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -18,6 +18,10 @@ function Header({loginStatus, loginToggle}) {
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
+  };
+
+  const handleSearchClick = () => {
+    navigate('/search');
   };
 
   const drawerWidth = 240; 
@@ -44,9 +48,9 @@ function Header({loginStatus, loginToggle}) {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center' }}>
           </Box>
 
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-            <SearchBar />
-            <SearchFilter/>
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: '5px' }}>
+            <SearchFilter genres={genres} languages={languages}/>
+            <SearchIcon onClick={handleSearchClick} sx={{ cursor: 'pointer' }} />
             {!loginStatus ? <LoginFormModal loginStatus={loginStatus} loginToggle={loginToggle} /> : <ProfileIcon loginToggle={loginToggle}/>}
           </Box>
         </Toolbar>
@@ -65,8 +69,8 @@ function Header({loginStatus, loginToggle}) {
           onKeyDown={toggleDrawer}
         >
           <Box sx={{ p: 2 }}>
-            <SearchBar />
-            <SearchFilter/>
+            <SearchFilter genres={genres} languages={languages}/>
+            <SearchIcon onClick={handleSearchClick} sx={{ cursor: 'pointer' }} />
             {!loginStatus ? <LoginFormModal loginStatus={loginStatus} loginToggle={loginToggle} /> : <ProfileIcon loginToggle={loginToggle} />}
           </Box>
         </Box>

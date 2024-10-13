@@ -14,4 +14,6 @@ public interface UserService {
     Optional<User> findByUsername(String username);
 
     Optional<User> findByEmail(String username);
+
+    User changeUserProfilePicture(String email, String filename);
 }

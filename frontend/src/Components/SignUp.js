@@ -51,41 +51,8 @@ export default function SignUp() {
   const fileInput = useRef();
   const { register, handleSubmit, trigger, watch, reset, formState: { errors } } = useForm();
 
-  const handleSignup = async (userData, profileImageFile) => {
-    const url = 'http://localhost:8080/auth/signup';
-    const formData = new FormData();
-    
-    formData.append('username', userData.username);
-    formData.append('email', userData.email);
-    formData.append('password', userData.password);
-    
-    if (profileImageFile) {
-      formData.append('profileImage', profileImageFile, profileImageFile.name);
-    }
-
-    try {
-      const response = await axios.post(url, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      alert("User created successfully");
-      console.log(response);
-      reset();
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        alert("Username/Email already taken");
-      } else if (error.response && error.response.status === 406) {
-        alert("Email already exists");
-      } else {
-        console.error('Error during signup', error);
-        alert("Signup failed");
-      }
-    }
-  };
-
   const onSubmit = async (data) => {
-    await handleSignup(data, profileImageFile);
+   // This is where the change to the OTP modal should happen and it should pass in the needed props
   };
 
   const handleFileChange = () => {
