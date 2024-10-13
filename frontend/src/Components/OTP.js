@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { TextField, Button, Box, FormHelperText, IconButton, InputAdornment } from "@mui/material";
+import React, { useState } from 'react';
+import { TextField, Button, Box} from "@mui/material";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import Snackbar from '@mui/material/Snackbar';
@@ -16,20 +16,22 @@ export default function OTP({ userData, profileImageFile}) {
     setSnackbarOpen(false);
   };
 
-  const checkOTP = async(email, otp) => {
-    const url = "http://localhost:8080/auth/signup/check-otp"
+  const checkOTP = async (email, otp) => {
+    const url = "http://localhost:8080/auth/signup/check-otp";
     try {
-        const response = await axios.post(url, {
-          email: email,
-          otp: otp,
-        });
-    
-        return response.data;
-      } catch (error) {
-        console.error("Error verifying OTP:", error);
-        throw error;
-      }
+      console.log("Sending OTP verification request:", { email, otp });
+      const response = await axios.post(url, {
+        email: email,
+        otp: otp,
+      });
+      console.log("OTP Response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error verifying OTP:", error.response?.data || error);
+      throw error;
+    }
   };
+  
   
   const handleSignup = async (userData, profileImageFile) => {
     const url = 'http://localhost:8080/auth/signup';
@@ -50,6 +52,7 @@ export default function OTP({ userData, profileImageFile}) {
         }
       });
       alert("User created successfully");
+      navigate("/")
       reset();
     } catch (error) {
       if (error.response && error.response.status === 409) {
@@ -63,11 +66,11 @@ export default function OTP({ userData, profileImageFile}) {
     }
   };
 
-const verifyOtpAndSignup = async () => {
+const verifyOtpAndSignup = async (userData, otp, profileImageFile) => {
     try {
         const otpResponse = await checkOTP(userData.email, otp);
         
-        if (otpResponse.ok) {
+        if (otpResponse.success) {
           await handleSignup(userData, profileImageFile);
         } else {
           alert("OTP verification failed");
@@ -81,7 +84,7 @@ const verifyOtpAndSignup = async () => {
     
     const onSubmit = (data) => {
         const otp = data.otp;
-        verifyOtpAndSignup(otp);
+        verifyOtpAndSignup(userData, otp, profileImageFile);
       };
 
 

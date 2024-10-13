@@ -10,6 +10,10 @@ public class OtpService {
 
     private HashMap<String, Integer> OtpStore;
 
+    public OtpService() {
+        this.OtpStore = new HashMap<>();
+    }
+
     public int generateOtp(String email) {
         Random rand = new Random();
         int OTP = rand.nextInt(100000);

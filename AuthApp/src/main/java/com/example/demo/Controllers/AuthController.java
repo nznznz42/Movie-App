@@ -3,8 +3,9 @@ package com.example.demo.Controllers;
 import com.example.demo.Exceptions.EmailAlreadyExistingException;
 import com.example.demo.Exceptions.EmailIdNotFoundException;
 import com.example.demo.Models.EmailData;
-import com.example.demo.Models.LoginRequest;
+import com.example.demo.Requests.LoginRequest;
 import com.example.demo.Models.User;
+import com.example.demo.Requests.OtpRequest;
 import com.example.demo.Services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -88,23 +89,26 @@ public class AuthController {
     public ResponseEntity<?> sendOTP(@RequestParam String email) {
         int OTP = otpService.generateOtp(email);
         EmailData emailData = new EmailData();
-        emailData.setSubject(email);
+        emailData.setReciever(email);
         emailData.setMessageBody("Your One Time Password is: " + OTP);
         emailData.setSubject("One Time Password");
         emailService.sendEmail(emailData);
+        System.out.println(emailData);
         return ResponseEntity.ok().body(null);
     }
 
     @PostMapping("/signup/check-otp")
-    public ResponseEntity<?> checkOTP(@RequestParam String email, @RequestParam int otp) {
-        Boolean checkFlag = otpService.checkOtp(email, otp);
-        if(!checkFlag) {
+    public ResponseEntity<?> checkOTP(@RequestBody OtpRequest otpRequest) {
+        Boolean checkFlag = otpService.checkOtp(otpRequest.getEmail(), otpRequest.getOtp());
+        if (!checkFlag) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect OTP");
         } else {
-            otpService.revokeOtp(email);
-            return ResponseEntity.ok().body(null);
+            System.out.println("Successful OTP");
+            otpService.revokeOtp(otpRequest.getEmail());
+            return ResponseEntity.ok().body(Map.of("success", true));
         }
     }
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> deregisterSession(@RequestBody Map<String, String> tokenPayload) {

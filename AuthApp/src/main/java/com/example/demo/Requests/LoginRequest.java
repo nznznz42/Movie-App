@@ -1,4 +1,4 @@
-package com.example.demo.Models;
+package com.example.demo.Requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

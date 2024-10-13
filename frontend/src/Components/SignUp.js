@@ -46,13 +46,13 @@ const StyledTextField = styled(TextField)`
   }
 `;
 
-export default function SignUp() {
+export default function SignUp({ onSignUpSubmit }) {
   const [profileImageFile, setSelectedFile] = useState(null);
   const fileInput = useRef();
-  const { register, handleSubmit, trigger, watch, reset, formState: { errors } } = useForm();
+  const { register, handleSubmit, trigger, watch, formState: { errors } } = useForm();
 
-  const onSubmit = async (data) => {
-   // This is where the change to the OTP modal should happen and it should pass in the needed props
+  const onSubmit = (data) => {
+    onSignUpSubmit(data, profileImageFile);
   };
 
   const handleFileChange = () => {
@@ -65,6 +65,7 @@ export default function SignUp() {
   return (
     <Box sx={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
       <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        {/* Form fields */}
         <StyledTextField
           label="Email Id"
           variant="filled"
