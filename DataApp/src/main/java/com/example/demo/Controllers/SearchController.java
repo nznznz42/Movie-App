@@ -32,12 +32,14 @@ public class SearchController {
 
     @PostMapping("/genres")
     public ResponseEntity<List<CMovie>> searchByGenres(@RequestBody GenreFilterRequest genreFilterRequest) throws Exception {
+        String query = genreFilterRequest.getQuery();
         List<Integer> genres = genreFilterRequest.getGenres();
         Boolean orQuery = genreFilterRequest.getOrQuery();
         int page = genreFilterRequest.getPageNumber();
 
-        CompletableFuture<List<CMovie>> movies = searchService.searchByGenre(genres, orQuery, page);
+        CompletableFuture<List<CMovie>> movies = searchService.searchByGenre(query, genres, orQuery, page);
         CompletableFuture.allOf(movies).join();
+        System.out.println(movies.get());
 
         return ResponseEntity.ok(movies.get());
     }
@@ -47,7 +49,7 @@ public class SearchController {
         List<Integer> genre = new ArrayList<>();
         genre.add(id);
 
-        CompletableFuture<List<CMovie>> movies = searchService.searchByGenre(genre, false, page);
+        CompletableFuture<List<CMovie>> movies = searchService.searchByGenre("",genre, false, page);
         CompletableFuture.allOf(movies).join();
 
         return ResponseEntity.ok(movies.get());

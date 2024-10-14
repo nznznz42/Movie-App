@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, InputAdornment, FormControlLabel, Checkbox, Typography, IconButton, Grid } from '@mui/material';
+import { Box, TextField, Button, InputAdornment, FormControlLabel, Checkbox, Typography, IconButton, Grid, Switch } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CloseIcon from '@mui/icons-material/Close';
@@ -9,9 +9,9 @@ export default function Search({ genres, languages }) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [searchQuery, setSearchQuery] = useState(''); 
-  const [selectedLanguage, setSelectedLanguage] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const [orQuery, setOrQuery] = useState(false);
   const [yearError, setYearError] = useState(false);
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
@@ -28,9 +28,9 @@ export default function Search({ genres, languages }) {
     setYearError(false);
 
     const params = new URLSearchParams();
-    if (selectedLanguage) params.append('language', selectedLanguage);
     if (selectedYear) params.append('year', selectedYear);
     if (selectedGenres.length > 0) params.append('genres', selectedGenres.join(','));
+    params.append('orQuery', orQuery);
 
     navigate(`/search/${searchQuery}?${params.toString()}`);
   };
@@ -43,19 +43,19 @@ export default function Search({ genres, languages }) {
     );
   };
 
-  const handleLanguageChange = (event) => {
-    setSelectedLanguage(event.target.value);
-  };
-
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
   };
 
+  const handleOrQueryChange = (event) => {
+    setOrQuery(event.target.checked); // Toggle OR/AND query
+  };
+
   const clearAllValues = () => {
     setSearchQuery('');
-    setSelectedLanguage('');
     setSelectedYear('');
     setSelectedGenres([]);
+    setOrQuery(false);
   };
 
   const handleClosePage = () => {
@@ -246,6 +246,21 @@ export default function Search({ genres, languages }) {
                 }
               }}
             />
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="subtitle1">Query Type</Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={orQuery}
+                  onChange={handleOrQueryChange}
+                  color="primary"
+                />
+              }
+              label={orQuery ? 'OR' : 'AND'}
+              labelPlacement="start"
+              sx={{ color: 'white' }}
+            />
+          </Box>
           </Box>
         </Box>
       )}

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 export default function ProfileIcon({loginToggle}) {
-    const {logout} = useAuth();
+    const {logout, profileImageUrl, currentUser} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate=useNavigate();
 
@@ -30,16 +30,12 @@ export default function ProfileIcon({loginToggle}) {
     return (
         <div>
             <Tooltip title="Profile" arrow>
-                <Avatar 
-                    sx={{ 
-                        bgcolor: 'gray', 
-                        width: 36, 
-                        height: 36, 
-                        marginLeft: 2 
-                    }} 
+            <Avatar
+                    sx={{ bgcolor: 'gray', width: 36, height: 36, marginLeft: 2 }}
                     onClick={handleClick}
+                    src={profileImageUrl} 
                 >
-                    P
+                    {!profileImageUrl ? currentUser.username.charAt(0).toUpperCase() : profileImageUrl} {/* Fallback to username's first letter */}
                 </Avatar>
             </Tooltip>
             <Menu

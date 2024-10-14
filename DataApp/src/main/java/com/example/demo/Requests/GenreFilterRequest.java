@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GenreFilterRequest {
+    private String query;
     private List<Integer> genres;
     private Boolean orQuery;
     private int pageNumber;

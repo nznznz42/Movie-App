@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, Button, Box, FormHelperText, IconButton, InputAdornment } from "@mui/material";
+import { TextField, Button, Box, FormHelperText, IconButton, InputAdornment, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import Visibility from '@mui/icons-material/Visibility';
@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-export default function Login({ loginStatus, loginToggle }) {
+export default function Login({ loginStatus, loginToggle, onForgotPassword }) {
   const { register, handleSubmit, formState: { errors }, trigger, reset } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -37,7 +37,9 @@ export default function Login({ loginStatus, loginToggle }) {
       const response = await axios.post(`http://localhost:8080/auth/login`, data);
       const token = response.data.token;
       const user=response.data.user;
-      login(user, token);
+      const pfpUrl = response.data.profileImageUrl.replace(/\s/g, '%20');
+      console.log(pfpUrl)
+      login(user, token, pfpUrl);
       reset();
       setSnackbarMessage('Login successful');
       setSnackbarSeverity('success'); 

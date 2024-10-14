@@ -34,6 +34,7 @@ const boxStyle = {
 export default function LoginFormModal({loginStatus, loginToggle}) {
   const [open, setOpen] = React.useState(false);
   const [isLoginForm, setIsLoginForm] = React.useState(true); 
+  const [isForgotPassword, setIsForgotPassword] = React.useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -44,6 +45,10 @@ export default function LoginFormModal({loginStatus, loginToggle}) {
     setOpen(false);
     setIsLoginForm(true);
   };
+
+  const onForgotPassword = () => {
+    setIsForgotPassword(true)
+  }
 
   return (
     <div>
@@ -79,6 +84,9 @@ export default function LoginFormModal({loginStatus, loginToggle}) {
             ) : (
               <SignUpModal />
             )}
+            <Typography sx={{ textAlign: 'center', marginTop: '10px', cursor: 'pointer', color: 'blue' }} onClick={onForgotPassword}>
+          Forgot Password?
+          </Typography>
 
             {isLoginForm && (
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>

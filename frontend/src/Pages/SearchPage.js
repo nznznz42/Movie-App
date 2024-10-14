@@ -11,36 +11,51 @@ const SearchPage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const { movieName } = useParams();
   const [searchParams] = useSearchParams();
-  
-  // Extract optional year and language from the URL parameters
+
+  // Extract optional year, language, and genres from the URL parameters
   const selectedYear = searchParams.get('year');
   const selectedLanguage = searchParams.get('language');
-  const selectedGenres =searchParams.get('genres');
+  const selectedGenres = searchParams.get('genres') ? searchParams.get('genres').split(',').map(Number) : [];
+  const orquery = searchParams.get("orQuery");
 
   const fetchSearchedMovies = async (pageNumber) => {
-    console.log(pageNumber);
     try {
-      const params = {
-        query: movieName,
-        page: pageNumber,
-      };
+      let response;
 
-      // Only include year and language if they are present
-      if (selectedYear) {
-        params.year = selectedYear;
-      }
-      if (selectedLanguage) {
-        params.language = selectedLanguage;
-      }
+      if (selectedGenres.length > 0) {
+        // If genres are selected, use the /search/genres endpoint (POST)
+        const requestBody = {
+          query: movieName,
+          genres: selectedGenres,
+          orQuery: orquery, // Assuming it's always a false query for now, can be made dynamic if needed
+          pageNumber: pageNumber,
+        };
 
-      if(selectedGenres){
-        params.genre=selectedGenres;
+        console.log("Fetching with genres:", requestBody);
+        response = await axios.post('http://localhost:8081/search/genres', requestBody);
+
+      } else {
+        // If no genres are selected, use the /searchForMovie endpoint (GET)
+        const params = {
+          query: movieName,
+          page: pageNumber,
+        };
+
+        // Only include year and language if they are present
+        if (selectedYear) {
+          params.year = selectedYear;
+        }
+        if (selectedLanguage) {
+          params.language = selectedLanguage;
+        }
+
+        console.log("Fetching without genres:", params);
+        response = await axios.get('http://localhost:8081/search', { params });
       }
-      console.log(params);
-      const response = await axios.get('http://localhost:8081/search', { params });
 
       setMovies(response.data);
-      setTotalPages(response.data.length);
+      setTotalPages(Math.ceil(response.data.length / 20)); // Adjust if necessary
+
     } catch (error) {
       console.error('Error fetching movies:', error);
     } finally {
@@ -66,45 +81,45 @@ const SearchPage = () => {
   };
 
   return (
-    <div style={{backgroundColor: '#141414',}}>
-    <div style={{ padding: '12px', marginLeft: '3cm', marginRight: '3cm',minHeight:'72vh' }}>
-      <h1 style={{ color: 'white' }}>
-        Showing results for "{movieName}" 
-        {selectedYear && ` in ${selectedYear}`} 
-        {selectedLanguage && ` in ${selectedLanguage}`}
-      </h1>
-      {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          <CircularProgress />
-        </div>
-      ) : movies.length > 0 ? (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: '25px',
-          }}
-        >
-          {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
-      ) : (
-        <div style={{ color: 'white' }}>No movies found for "{movieName}"</div>
-      )}
+    <div style={{ backgroundColor: '#141414' }}>
+      <div style={{ padding: '12px', marginLeft: '3cm', marginRight: '3cm', minHeight: '72vh' }}>
+        <h1 style={{ color: 'white' }}>
+          Showing results for "{movieName}"
+          {selectedYear && ` in ${selectedYear}`}
+          {selectedLanguage && ` in ${selectedLanguage}`}
+        </h1>
+        {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <CircularProgress />
+          </div>
+        ) : movies.length > 0 ? (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              gap: '25px',
+            }}
+          >
+            {movies.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </div>
+        ) : (
+          <div style={{ color: 'white' }}>No movies found for "{movieName}"</div>
+        )}
 
-      {/* Pagination */}
-      {movies.length > 0 && (
-        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-          <Button variant="contained" onClick={handlePreviousPage} disabled={page === 1}>
-            Previous
-          </Button>
-          <Button variant="contained" onClick={handleNextPage} disabled={page === totalPages}>
-            Next
-          </Button>
-        </div>
-      )}
-    </div>
+        {/* Pagination */}
+        {movies.length > 0 && (
+          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+            <Button variant="contained" onClick={handlePreviousPage} disabled={page === 1}>
+              Previous
+            </Button>
+            <Button variant="contained" onClick={handleNextPage} disabled={page === totalPages}>
+              Next
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

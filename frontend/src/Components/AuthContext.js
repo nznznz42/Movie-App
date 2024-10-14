@@ -6,12 +6,14 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [authToken, setAuthToken] = useState(localStorage.getItem('auth-token') || null);
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('current-user') || null);
+  const [profileImageUrl, setProfileImageUrl] = useState(localStorage.getItem('pfp-url') || null);
 
-  const login = (user, token) => {
+  const login = (user, token, url) => {
     setAuthToken(token);
     localStorage.setItem('auth-token', token);
     setCurrentUser(user)
     localStorage.setItem('current-user', user);
+    localStorage.setItem('pfp-url', url);
     console.log(user)
   };
 
@@ -31,11 +33,12 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('auth-token');
     setCurrentUser(null)
     localStorage.removeItem('current-user')
+    localStorage.removeItem('pfp-url')
     console.log(authToken)
   };
 
   return (
-    <AuthContext.Provider value={{ authToken, currentUser, login, logout }}>
+    <AuthContext.Provider value={{ authToken, currentUser, profileImageUrl, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

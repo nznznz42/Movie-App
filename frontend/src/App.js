@@ -26,7 +26,6 @@ function App() {
             try {
                 const response = await axios.get('http://localhost:8081/config');
                 const { genres, languages } = response.data;
-                console.log(genres)
                 setGenres(genres);
                 setLanguages(languages);
             } catch (error) {

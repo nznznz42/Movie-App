@@ -36,7 +36,7 @@ public class SearchService {
     }
 
     @Async
-    public CompletableFuture<List<CMovie>> searchByGenre(List<Integer> genres, Boolean orQuery, int page) throws Exception {
+    public CompletableFuture<List<CMovie>> searchByGenre(String query,List<Integer> genres, Boolean orQuery, int page) throws Exception {
         DiscoverMovieParamBuilder paramBuilder = new DiscoverMovieParamBuilder();
         paramBuilder.withGenres(genres, orQuery).page(page);
 
