@@ -3,6 +3,7 @@ package com.example.demo.Services;
 import com.example.demo.Configs.TmdbApiKey;
 import com.example.demo.Models.AccountDetails;
 import com.example.demo.Models.CMovie;
+import com.example.demo.Models.SubscriptionType;
 import com.example.demo.Models.Watchlist;
 import com.example.demo.Repositories.AccountRepository;
 import info.movito.themoviedbapi.TmdbApi;
@@ -76,6 +77,13 @@ public class AccountService {
                 break;
             }
         }
+        return accountRepository.save(account);
+    }
+
+    @Transactional
+    public AccountDetails updateSubscriptionStatusToPaid(String username) {
+        AccountDetails account = accountRepository.findByUsername(username);
+        account.setSubscriptionType(SubscriptionType.PAID);
         return accountRepository.save(account);
     }
 }

@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Card, CardContent, Typography, Button } from '@mui/material';
 import { styled } from '@mui/system';
+import { useAuth } from './AuthContext';
+import axios from 'axios'
+import Razorpay from 'react-razorpay/dist/razorpay';
+
 
 const Container = styled(Box)`
   display: flex;
@@ -84,6 +88,70 @@ const PlanTag = styled(Box)`
 `;
 
 const Subscribe = () => {
+  const { currentUser } = useAuth();
+
+  var options = {
+    "key": "rzp_test_eLX6WS61npcEPJ", 
+    "amount": "39900", 
+    "currency": "INR",
+    "name": "Moviz inc",
+    "description": "Test Transaction",
+    "order_id": "order_IluGWxBm9U8zJ8", 
+    "handler": function (response){
+        authenticateOrder(response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature)
+    },
+    "prefill": {
+        "name": currentUser.username,
+        "email": currentUser.email,
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+
+const createOrder = async () => {
+  try {
+      const response = await axios.post('http://localhost:8081/account/create-order');
+      const orderid = response.data.id;
+      return orderid;
+  } catch (error) {
+      console.error('Error creating order:', error.response ? error.response.data : error.message);
+  }
+};
+
+  const authenticateOrder = async (paymentID, orderID, signature) => {
+    try {
+      const response = await axios.post('http://localhost:8081/account/authenticate-order', null, {
+        params: {
+          username: currentUser.username,
+          paymentID: paymentID,
+          orderID: orderID,
+          signature: signature,
+        },
+      });
+    } catch (error) {
+      console.error("Error authenticating order:", error);
+    }
+  };
+
+  const subscribeToPaid = async (options) => {
+      const id = await createOrder();
+      options.order_id = id;
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+      rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+      });
+  };
+
+  const onClick = () => {
+    subscribeToPaid(options)
+  }
+
   return (
     <Container>
       {/* Basic Plan */}
@@ -112,7 +180,7 @@ const Subscribe = () => {
           <Features>Resolution: 1080p</Features>
           <Features>Devices: TV, Mobile, Tablet</Features>
           <Features>Features: Available Most Popular Movies</Features>
-          <PlanButton variant="contained">Subscribe Now</PlanButton>
+          <PlanButton variant="contained" onClick={onClick}>Subscribe Now</PlanButton>
         </CardContent>
       </PlanCard>
     </Container>

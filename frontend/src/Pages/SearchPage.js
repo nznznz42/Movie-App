@@ -108,7 +108,6 @@ const SearchPage = () => {
           <div style={{ color: 'white' }}>No movies found for "{movieName}"</div>
         )}
 
-        {/* Pagination */}
         {movies.length > 0 && (
           <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
             <Button variant="contained" onClick={handlePreviousPage} disabled={page === 1}>
