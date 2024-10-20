@@ -62,7 +62,7 @@ const UserWatchlist = ({account}) => {
         <Typography>Loading...</Typography>
       ) : (
         watchlists.map((watchlist) => (
-          <Paper key={watchlist.name} style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#1c1b1b', minWidth: '65vw' }}>
+          <Paper key={watchlist.name} style={{ marginBottom: '10px', padding: '5px', backgroundColor: '#1c1b1b', minWidth: '75vw' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h4" style={{ color: 'white', margin: '0 0 10px 0' }}>
                 {watchlist.name}

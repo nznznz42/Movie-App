@@ -5,9 +5,14 @@ import com.example.demo.Exceptions.EmailIdNotFoundException;
 import com.example.demo.Models.User;
 import com.example.demo.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 @Service
@@ -15,6 +20,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Value("${upload.directory}")
+    private String profileDirectory;
 
     @Override
     public User addUser(User user) throws EmailAlreadyExistingException {
@@ -46,6 +54,15 @@ public class UserServiceImpl implements UserService {
     public User changeUserProfilePicture(String email, String filename) {
         Optional<User> user = userRepository.findByEmail(email);
         User existingUser = user.get();
+        String oldFilename = existingUser.getProfileImageFileName();
+        if (oldFilename != null && !oldFilename.isEmpty()) {
+            Path oldFilePath = Paths.get(profileDirectory, oldFilename);
+            try {
+                Files.deleteIfExists(oldFilePath);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to delete old profile image", e);
+            }
+        }
         existingUser.setProfileImageFileName(filename);
         return userRepository.save(existingUser);
     }

@@ -35,7 +35,7 @@ export default function ProfileIcon({loginToggle}) {
                     onClick={handleClick}
                     src={profileImageUrl} 
                 >
-                    {!profileImageUrl ? currentUser.username.charAt(0).toUpperCase() : profileImageUrl} {/* Fallback to username's first letter */}
+                    {!profileImageUrl ? currentUser.username.charAt(0).toUpperCase() : profileImageUrl}
                 </Avatar>
             </Tooltip>
             <Menu

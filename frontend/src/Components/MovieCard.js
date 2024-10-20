@@ -1,12 +1,41 @@
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import { useAuth } from './AuthContext';
+import WatchlistPopup from '../Components/WatchlistPopup';
+import axios from 'axios';
 
 function MovieCard({ movie, onDelete }) {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
+  const containerHeight = onDelete ? '150px' : '300px';
+  const containerWidth = onDelete ? '100px' : '200px';
+  const [isPaidPlan, setIsPaidPlan] = useState(false);
+  const [popupOpen, setPopupOpen] = useState(false); 
+  const { currentUser } = useAuth();
+
+  const fetchAccountDetails = async (username) => {
+    try {
+     const response = await axios.get(`http://localhost:8081/account`, {
+       params: { username }
+     });
+     
+     if(response.data.subscriptionType === "PAID") {
+       setIsPaidPlan(true)
+     }} catch (err) {
+       console.log("not logged in")
+     }
+ };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchAccountDetails(currentUser.username);
+    }
+  }, [currentUser]);
+  
+
 
   const handleClick = () => {
     navigate(`/movie/${movie.id}`); 
@@ -16,8 +45,8 @@ function MovieCard({ movie, onDelete }) {
     <div 
       style={{
         position: 'relative',
-        width: '200px',
-        height: '300px',
+        width: containerWidth,
+        height: containerHeight,
         border: '1px solid #ccc',
         overflow: 'hidden',
         cursor: 'pointer',
@@ -54,8 +83,19 @@ function MovieCard({ movie, onDelete }) {
           padding: '10px',
           textAlign: 'center'
         }}>
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>{movie.title}</h3>
-          <p style={{ margin: '5px 0', fontSize: '12px' }}>Release Date: {movie.release_date}</p>
+          {!onDelete && (
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>
+              {movie.original_title}
+            </h3>
+          )}
+
+          {onDelete ? (
+            <p style={{ margin: '5px 0', fontSize: '12px' }}>{movie.original_title}</p>
+          ) : (
+            <p style={{ margin: '5px 0', fontSize: '12px' }}>
+              Release Date: {movie.release_date ? movie.release_date : 'Unknown'}
+            </p>
+          )}
           <p style={{ margin: '5px 0', fontSize: '12px' }}>Rating: {movie.vote_average}</p>
           {onDelete && (
             <IconButton
@@ -68,8 +108,19 @@ function MovieCard({ movie, onDelete }) {
               <DeleteIcon />
             </IconButton>
           )}
+          {(isPaidPlan && !onDelete) && (<IconButton 
+                  className="add-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setPopupOpen(true)
+                  }} 
+                  sx={{ color: 'white', '&:hover': { color: '#f50057' } }} 
+                >
+                  <AddIcon fontSize="large" />
+                </IconButton>)}
         </div>
       )}
+      <WatchlistPopup open={popupOpen} onClose={() => setPopupOpen(false)} movieId={movie.id}/>
     </div>
   );
 }

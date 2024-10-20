@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import './MovieView.css'; 
 import ScrollableList from '../Components/ScrollableList';
 import WatchlistPopup from '../Components/WatchlistPopup';
+import { useAuth } from '../Components/AuthContext';
 
 const MoviePage = () => {
   const { id } = useParams();
@@ -17,7 +18,30 @@ const MoviePage = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [player, setPlayer] = useState(null);
   const [popupOpen, setPopupOpen] = useState(false);
-  const [SimilarMovies, setSimilarMovies] = useState([]) 
+  const [SimilarMovies, setSimilarMovies] = useState([])
+  const [isPaidPlan, setIsPaidPlan] = useState(false); 
+  const { currentUser } = useAuth();
+
+  const fetchAccountDetails = async (username) => {
+     try {
+      const response = await axios.get(`http://localhost:8081/account`, {
+        params: { username }
+      });
+      
+      if(response.data.subscriptionType === "PAID") {
+        setIsPaidPlan(true)
+      }} catch (err) {
+        console.log("not logged in")
+      }
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchAccountDetails(currentUser.username);
+    }
+  }, [currentUser]);
+  
+
   
   const fetchSimilarMovies = async () => {
     try {
@@ -44,17 +68,11 @@ const MoviePage = () => {
 
   useEffect(() => {
     fetchMovieDetails();
-  }, [id]);
+  });
 
   useEffect(() => {
     fetchSimilarMovies();
-  }, [id])
-
-  useEffect(() => {
-    if (movie) {
-      console.log('Movie state updated:', movie);
-    }
-  }, [movie]);
+  })
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -72,10 +90,6 @@ const MoviePage = () => {
       player.stopVideo();
     }
   };
-
-  const handleAddButtonClick = () => {
-
-  }
 
   const onYouTubeIframeAPIReady = () => {
     const trailerId = movie?.trailers[0]; 
@@ -157,13 +171,13 @@ const MoviePage = () => {
                 >
                   <PlayArrowIcon fontSize="large" />
                 </IconButton>
-                <IconButton 
+                {isPaidPlan && (<IconButton 
                   className="add-button"
                   onClick={() => setPopupOpen(true)} 
                   sx={{ color: 'white', '&:hover': { color: '#f50057' } }} 
                 >
                   <AddIcon fontSize="large" />
-                </IconButton>
+                </IconButton>)}
               </div>
               
               <Typography 

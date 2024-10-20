@@ -1,141 +1,122 @@
-import { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { Box, Button, Typography, Avatar, TextField, Grid, IconButton } from '@mui/material';
+import { useState, useRef, useEffect } from "react";
+import { Box, Typography, Avatar, Card, CardContent, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit'; 
+import axios from "axios";
 import { useAuth } from "./AuthContext";
 
-export default function EditProfile({account}) {
+export default function EditProfile({ account }) {
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState(null);
-  const fileInputRef = useRef(null); 
-  const { currentUser } = useAuth();
+  const fileInputRef = useRef(null);
+  const { currentUser, profileImageUrl } = useAuth();
 
-  const { register, handleSubmit } = useForm({
-    defaultValues: {
-      username: account?.username || '',
-      email: account?.email || '',
-    },
-  });
+  useEffect(() => {
+    setProfileImage(profileImageUrl)
+  }, [profileImageUrl])
+  
 
-  const handleImageChange = (event) => {
+  const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result); 
+        setPreview(reader.result);
       };
       reader.readAsDataURL(file);
       setProfileImage(file);
+      try {
+        const formData = new FormData();
+        formData.append("email", account?.email || currentUser.email);
+        formData.append("profileImage", file);
+
+        const response = await axios.post("http://localhost:8080/auth/change-avatar", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        console.log("Response from server:", response.data);
+        const profileUrl = "http://localhost:8080/profile-image/" + response.data.profileImageFileName
+        localStorage.setItem('pfp-url', profileUrl);
+        setProfileImage(profileUrl)
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        alert("Failed to update profile picture.");
+      }
     }
   };
 
   const handleEditClick = () => {
     if (fileInputRef.current) {
-        fileInputRef.current.click();
+      fileInputRef.current.click();
     }
-  };
-
-  const onSubmit = (data) => {
-    console.log('Form data:', data);
-    if (profileImage) {
-      console.log('Image uploaded:', profileImage);
-    }
-    alert('Profile saved successfully!');
   };
 
   return (
-    <div>
-      {/* Profile Form */}
-      <Box
+    <Box
+      sx={{
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#151515',
+        color: 'white',
+      }}
+    >
+      <Card
         sx={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
           padding: '20px',
-          backgroundColor: '#151515',  // Changed to a black shade
-          color: 'white'  // Set global text color to white
+          backgroundColor: '#202020',
+          color: 'white',
+          textAlign: 'center',
+          width: '300px',
         }}
       >
-        <Typography variant="h4" sx={{ fontWeight: 'bold', marginTop: -15, marginBottom: '40px', color: '#fff' }}>
-          CHANGE YOUR PROFILE
-        </Typography>
-
-        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '30px', position: 'relative' }}>
-          {/* Clickable Profile Image */}
+        <Box sx={{ position: 'relative' }}>
           <label htmlFor="profile-image-upload" style={{ cursor: 'pointer' }}>
-            <Avatar alt="Profile Picture"
-              src={preview || currentUser.profileImageUrl}  // Show preview if image is selected, otherwise show from context
-              sx={{ width: 100, height: 100, marginBlock: '-4px' }}
-              onClick={handleEditClick} // Trigger the file input when avatar is clicked
-            />
+            <Avatar
+              alt="Profile Picture"
+              src={profileImage}
+              sx={{ width: 100, height: 100, margin: 'auto' }}
+              onClick={handleEditClick}
+            >
+              {!profileImageUrl ? currentUser.username.charAt(0).toUpperCase() : ''}
+            </Avatar>
           </label>
-          <input accept="image/*" style={{ display: 'none' }} id="profile-image-upload" type="file"
-            onChange={handleImageChange} ref={fileInputRef} // Reference to the input element 
+          <input
+            accept="image/*"
+            style={{ display: 'none' }}
+            id="profile-image-upload"
+            type="file"
+            onChange={handleImageChange}
+            ref={fileInputRef}
           />
-          {/* Edit Icon Positioned at Bottom Right of Avatar */}
           <IconButton
-            sx={{ position: 'absolute', bottom: 0, right: '10px', backgroundColor: 'rgba(0,0,0,0.6)', color: 'white', width: 30, height: 30 }}
-            aria-label="edit picture" onClick={handleEditClick} // Trigger the file input when the edit icon is clicked
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              right: 'calc(50% - 15px)',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              color: 'white',
+              width: 30,
+              height: 30,
+            }}
+            aria-label="edit picture"
+            onClick={handleEditClick}
           >
             <EditIcon />
           </IconButton>
         </Box>
-
-        {/* Form Fields */}
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={2} sx={{ width: '100%' }}>
-            <Grid item xs={12}>
-              <TextField fullWidth label="User Name" name="username" {...register('username')}
-                InputLabelProps={{ style: { color: '#fff' } }} // Change label text to white
-                InputProps={{
-                  sx: {
-                    '& fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.5)', // Light white border color
-                    },
-                    '& input': {
-                      color: '#fff', // Change input text to white
-                    },
-                    '&:hover fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.8)', // Brighter white on hover
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#fff', // Fully white border when focused
-                    }
-                  }
-                }}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField fullWidth label="E-mail address" name="email" {...register('email')}
-                InputLabelProps={{ style: { color: '#fff' } }} // Change label text to white
-                InputProps={{
-                  sx: {
-                    '& fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.5)', // Light white border color
-                    },
-                    '& input': {
-                      color: '#fff', // Change input text to white
-                    },
-                    '&:hover fieldset': {
-                      borderColor: 'rgba(255, 255, 255, 0.8)', // Brighter white on hover
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#fff', // Fully white border when focused
-                    }
-                  }
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          {/* Save Button */}
-          <Button type="submit" variant="contained"
-            sx={{ marginTop: '30px', backgroundColor: '#2f2fd8', color: '#fff' }} >
-            Save </Button>
-        </form>
-      </Box>
-    </div>
+        <CardContent>
+          <Typography variant="h6" sx={{ marginTop: '10px' }}>
+            {account?.username || currentUser.username}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+            {account?.email || currentUser.email}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }

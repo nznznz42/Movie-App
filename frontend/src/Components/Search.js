@@ -5,7 +5,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 
-export default function Search({ genres, languages }) {
+export default function Search({ genres }) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [searchQuery, setSearchQuery] = useState(''); 
@@ -48,7 +48,7 @@ export default function Search({ genres, languages }) {
   };
 
   const handleOrQueryChange = (event) => {
-    setOrQuery(event.target.checked); // Toggle OR/AND query
+    setOrQuery(event.target.checked); 
   };
 
   const clearAllValues = () => {
@@ -216,7 +216,7 @@ export default function Search({ genres, languages }) {
                           sx={{ padding: '0px', color: 'white', '&.Mui-checked': { color: '#1E90FF' } }}
                         />
                       }
-                      label={genre.name}  // Access the 'name' property of the genre
+                      label={genre.name}  
                       sx={{ color: 'white', margin: 0.25 }}
                     />
                   </Grid>

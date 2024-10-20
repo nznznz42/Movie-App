@@ -10,6 +10,7 @@ export default function Profile() {
   const [activeSection, setActiveSection] = useState('profile');
   const [account, setAccount] = useState(null);
   const [error, setError] = useState(null);
+  const [isPaidPlan, setIsPaidPlan] = useState(false);
   const { currentUser } = useAuth();
 
   const fetchAccountDetails = async (username) => {
@@ -18,6 +19,9 @@ export default function Profile() {
         params: { username }
       });
       setAccount(response.data);
+      if(response.data.subscriptionType == "PAID") {
+        setIsPaidPlan(true)
+      }
       setError(null); 
     } catch (err) {
       if (err.response && err.response.status === 404) {
@@ -30,17 +34,9 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    if (account) {
-      console.log(account);
-    }
-  }, [account]);
-  
-
-  useEffect(() => {
     fetchAccountDetails(currentUser.username)
   }, [currentUser.username])
 
-  // Function to handle section change
   const handleSectionChange = (section) => {
     setActiveSection(section);
   };
@@ -51,23 +47,23 @@ export default function Profile() {
         display: 'flex',
         minHeight: '100vh',
         backgroundColor: '#fff',
-        flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically on small screens
+        flexDirection: { xs: 'column', sm: 'row' }, 
       }}
     >
       <Box
         sx={{
-          width: { xs: '100%', sm: '16%', md: '15%' }, // Full width on small screens, 16% on small, 15% on medium+
+          width: { xs: '100%', sm: '16%', md: '15%' }, 
           backgroundColor: '#0e0e0e',
           color: 'white',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-start',
           padding: '20px',
-          alignItems: { xs: 'center', sm: 'flex-start' }, // Center items on small screens
-          position: { sm: 'sticky' }, // Sidebar becomes sticky for larger screens
-          top: 0, // Stick to the top of the viewport
-          height: '100vh', // Full viewport height
-          overflow: 'hidden', // No scrolling in the sidebar
+          alignItems: { xs: 'center', sm: 'flex-start' }, 
+          position: { sm: 'sticky' }, 
+          top: 0,
+          height: '100vh', 
+          overflow: 'hidden', 
         }}
       >
         <Typography
@@ -75,19 +71,18 @@ export default function Profile() {
           sx={{
             fontWeight: 'bold',
             marginBottom: '40px',
-            textAlign: { xs: 'center', sm: 'left' }, // Center on small screens
+            textAlign: { xs: 'center', sm: 'left' }, 
             width: '100%',
           }}
         >
           PROFILE
         </Typography>
 
-        {/* Sidebar Buttons */}
         <Button
           variant="text"
           sx={{
             marginBottom: '20px',
-            justifyContent: { xs: 'center', sm: 'flex-start' }, // Center on small screens
+            justifyContent: { xs: 'center', sm: 'flex-start' }, 
             textTransform: 'none',
             color: 'white',
             textAlign: 'left',
@@ -97,11 +92,11 @@ export default function Profile() {
         >
           Profile
         </Button>
-        <Button
+        {isPaidPlan && (<Button
           variant="text"
           sx={{
             marginBottom: '20px',
-            justifyContent: { xs: 'center', sm: 'flex-start' }, // Center on small screens
+            justifyContent: { xs: 'center', sm: 'flex-start' },
             textTransform: 'none',
             color: 'white',
             textAlign: 'left',
@@ -110,24 +105,23 @@ export default function Profile() {
           onClick={() => handleSectionChange('watchlist')}
         >
           WatchList
-        </Button>
+        </Button>)}
         <Button
           variant="text"
           sx={{
             marginBottom: '20px',
-            justifyContent: { xs: 'center', sm: 'flex-start' }, // Center on small screens
+            justifyContent: { xs: 'center', sm: 'flex-start' },
             textTransform: 'none',
             color: 'white',
             textAlign: 'left',
             width: '100%',
           }}
-          onClick={() => handleSectionChange('subscription')} // New button for Subscription
+          onClick={() => handleSectionChange('subscription')} 
         >
           Subscription
         </Button>
       </Box>
 
-      {/* Content Area (scrollable) */}
       <Box
         sx={{
           flex: 1,
@@ -135,11 +129,10 @@ export default function Profile() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'flex-start',
-          padding: { xs: '5px', sm: '5px' }, // Padding adjusts based on screen size
+          padding: { xs: '5px', sm: '5px' },
           backgroundColor: '#151515',
         }}
       >
-        {/* Conditionally render EditProfile when "Profile" is clicked or initially */}
         {activeSection === 'profile' && (
           <Box
             sx={{
@@ -177,7 +170,7 @@ export default function Profile() {
               borderRadius: '10px',
             }}
           >
-            <Subscribe />
+            <Subscribe isPaidPlan={isPaidPlan} setPaidPlan={setIsPaidPlan}/>
           </Box>
         )}
       </Box>

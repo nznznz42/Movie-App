@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Checkbox, FormControlLabel, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
@@ -120,7 +120,7 @@ const WatchlistPopup = ({ open, onClose, movieId }) => {
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
-            <DialogContent>
+            <DialogContent onClick={(e) => e.stopPropagation()}>
                 {successMessage && (
                     <Typography variant="body1" color="success.main">{successMessage}</Typography>
                 )}
@@ -158,7 +158,7 @@ const WatchlistPopup = ({ open, onClose, movieId }) => {
                     }}
                 />
             </DialogContent>
-            <DialogActions>
+            <DialogActions onClick={(e) => e.stopPropagation()}>
                 <Button onClick={onClose} color="primary">Cancel</Button>
                 <Button onClick={handleSave} color="primary">Save</Button>
                 <Button onClick={handleCreateNewWatchlist} color="primary">Create</Button>

@@ -86,4 +86,12 @@ public class AccountService {
         account.setSubscriptionType(SubscriptionType.PAID);
         return accountRepository.save(account);
     }
+
+    @Transactional
+    public AccountDetails cancelPaidSubscription(String username) {
+        AccountDetails account = accountRepository.findByUsername(username);
+        account.setSubscriptionType(SubscriptionType.FREE);
+        account.getWatchlists().clear();
+        return accountRepository.save(account);
+    }
 }

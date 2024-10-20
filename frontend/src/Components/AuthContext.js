@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(user)
     localStorage.setItem('current-user', user);
     localStorage.setItem('pfp-url', url);
-    console.log(user)
   };
 
   const logout = async () => {
@@ -29,13 +28,13 @@ export const AuthProvider = ({ children }) => {
       console.error("Error submitting form: ", error);
     }
 
-    setAuthToken(null);
     localStorage.removeItem('auth-token');
-    setCurrentUser(null)
+    setAuthToken(null);
     localStorage.removeItem('current-user')
+    setCurrentUser(null)
     localStorage.removeItem('pfp-url')
-    console.log(authToken)
-  };
+    setProfileImageUrl(null)
+    };
 
   return (
     <AuthContext.Provider value={{ authToken, currentUser, profileImageUrl, login, logout }}>

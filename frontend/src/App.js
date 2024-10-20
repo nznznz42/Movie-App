@@ -15,7 +15,6 @@ import axios from 'axios';
 function App() {
     const [loginStatus, setLogin] = useState(false)
     const [genres, setGenres] = useState([]);
-    const [languages, setLanguages] = useState([]);
 
     const toggleLogin = (val) => {
         setLogin(val)
@@ -25,9 +24,8 @@ function App() {
         const fetchConfig = async () => {
             try {
                 const response = await axios.get('http://localhost:8081/config');
-                const { genres, languages } = response.data;
+                const { genres } = response.data;
                 setGenres(genres);
-                setLanguages(languages);
             } catch (error) {
                 console.error('Error fetching config:', error);
             }
@@ -43,7 +41,7 @@ function App() {
                     <Header loginStatus={loginStatus} loginToggle={toggleLogin} genres={genres}/>
                     <Routes>
                         <Route path="/" element={<HomePage loginStatus={loginStatus}/>} />
-                        <Route path="/search" element={<Search genres={genres} languages={languages}/>} />
+                        <Route path="/search" element={<Search genres={genres}/>} />
                         <Route path="/movie/:id" element={<MoviePage />} />
                         <Route path="/top-rated" element={<ListPage pagetype="TopRated"/>} />
                         <Route path="/upcoming" element={<ListPage pagetype="Upcoming" />} />

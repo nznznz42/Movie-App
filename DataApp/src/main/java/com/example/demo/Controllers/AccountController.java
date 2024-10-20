@@ -138,5 +138,10 @@ public class AccountController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
+
+    @GetMapping("/cancel-subscription")
+    public ResponseEntity<?> cancelSubscription(@RequestParam String username) {
+        return ResponseEntity.ok().body(accountService.cancelPaidSubscription(username));
+    }
 }
 
