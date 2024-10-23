@@ -3,7 +3,7 @@ import { Avatar, Tooltip, Menu, MenuItem } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-export default function ProfileIcon({loginToggle}) {
+export default function ProfileIcon() {
     const {logout, profileImageUrl, currentUser} = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate=useNavigate();
@@ -23,7 +23,6 @@ export default function ProfileIcon({loginToggle}) {
 
     const handleLogout = async() => {
         logout();
-        loginToggle(false)
         navigate("/")
     };
 

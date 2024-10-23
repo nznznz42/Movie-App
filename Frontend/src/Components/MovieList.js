@@ -3,7 +3,7 @@ import MovieCard from './MovieCard';
 import { IconButton } from '@mui/material';
 import { ArrowForward, ArrowBack } from '@mui/icons-material';
 
-function MovieList({ movies, loading, onDelete }) {
+function MovieList({ movies, loading, onDelete}) {
   const [isHovered, setIsHovered] = useState(false);
   const scrollRef = useRef(null);
   const containerHeight = onDelete ? '150px' : '300px';
@@ -40,7 +40,7 @@ function MovieList({ movies, loading, onDelete }) {
         {movies.length > 0 ? (
           movies.map(movie => (
             <div key={movie.id} style={{ marginRight: '10px' }}>
-              <MovieCard movie={movie} {...(onDelete ? { onDelete } : {})}/> 
+              <MovieCard movie={movie} {...(onDelete ? { onDelete } : {})} /> 
             </div>
           ))
         ) : (

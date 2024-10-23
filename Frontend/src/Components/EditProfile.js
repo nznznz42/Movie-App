@@ -1,20 +1,21 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, Typography, Avatar, Card, CardContent, IconButton } from '@mui/material';
+import { Box, Typography, Avatar, Card, CardContent, IconButton, Snackbar, Alert } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit'; 
 import axios from "axios";
 import { useAuth } from "./AuthContext";
 
-export default function EditProfile({ account }) {
+export default function EditProfile() {
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const fileInputRef = useRef(null);
-  const { currentUser, profileImageUrl } = useAuth();
+  const { currentUser, profileImageUrl, authToken, setProfileImageUrl, account } = useAuth();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     setProfileImage(profileImageUrl)
   }, [profileImageUrl])
   
-
   const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -32,16 +33,18 @@ export default function EditProfile({ account }) {
         const response = await axios.post("http://localhost:8080/auth/change-avatar", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${authToken}`,
           },
         });
 
         console.log("Response from server:", response.data);
         const profileUrl = "http://localhost:8080/profile-image/" + response.data.profileImageFileName
-        localStorage.setItem('pfp-url', profileUrl);
+        setProfileImageUrl(profileUrl)
         setProfileImage(profileUrl)
       } catch (error) {
         console.error("Error uploading image:", error);
-        alert("Failed to update profile picture.");
+        setSnackbarMessage("Failed to update profile picture."); 
+        setSnackbarOpen(true);
       }
     }
   };
@@ -51,6 +54,10 @@ export default function EditProfile({ account }) {
       fileInputRef.current.click();
     }
   };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  }
 
   return (
     <Box
@@ -117,6 +124,16 @@ export default function EditProfile({ account }) {
           </Typography>
         </CardContent>
       </Card>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
+

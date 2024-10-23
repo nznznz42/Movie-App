@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useParams} from 'react-router-dom';
 import Header from './Components/Header';
-import { AuthProvider } from './Components/AuthContext';
+import { AuthProvider, useAuth } from './Components/AuthContext';
 import HomePage from './Pages/HomePage';
 import MoviePage from './Pages/MoviePage';
 import ListPage from './Pages/ListPage';
@@ -13,12 +13,7 @@ import Subscribe from './Components/Subscribe';
 import axios from 'axios';
 
 function App() {
-    const [loginStatus, setLogin] = useState(false)
     const [genres, setGenres] = useState([]);
-
-    const toggleLogin = (val) => {
-        setLogin(val)
-    };
 
     useEffect(() => {
         const fetchConfig = async () => {
@@ -38,9 +33,9 @@ function App() {
         <div className="App">
             <AuthProvider>
                 <Router>
-                    <Header loginStatus={loginStatus} loginToggle={toggleLogin} genres={genres}/>
+                    <Header genres={genres}/>
                     <Routes>
-                        <Route path="/" element={<HomePage loginStatus={loginStatus}/>} />
+                        <Route path="/" element={<HomePage />} />
                         <Route path="/search" element={<Search genres={genres}/>} />
                         <Route path="/movie/:id" element={<MoviePage />} />
                         <Route path="/top-rated" element={<ListPage pagetype="TopRated"/>} />

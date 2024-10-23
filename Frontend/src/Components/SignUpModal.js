@@ -43,7 +43,9 @@ export default function SignUpModal() {
 
   const handleSignUpSubmit = (data, file) => {
     setUserData(data);
-    setProfileImageFile(file);
+    if(file != null) {
+      setProfileImageFile(file);
+    }
     setOpen(false);
     setOtpOpen(true);
   };

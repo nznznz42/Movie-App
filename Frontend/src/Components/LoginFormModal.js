@@ -31,7 +31,7 @@ const boxStyle = {
   overflow: 'auto', 
 };
 
-export default function LoginFormModal({loginStatus, loginToggle}) {
+export default function LoginFormModal() {
   const [open, setOpen] = React.useState(false);
   const [isLoginForm, setIsLoginForm] = React.useState(true); 
   const [isForgotPassword, setIsForgotPassword] = React.useState(false);
@@ -80,13 +80,13 @@ export default function LoginFormModal({loginStatus, loginToggle}) {
             </Box>
 
             {isLoginForm ? (
-              <Login loginStatus={loginStatus} loginToggle={loginToggle}/>  
+              <Login />  
             ) : (
               <SignUpModal />
             )}
-            <Typography sx={{ textAlign: 'center', marginTop: '10px', cursor: 'pointer', color: 'blue' }} onClick={onForgotPassword}>
+            {/* <Typography sx={{ textAlign: 'center', marginTop: '10px', cursor: 'pointer', color: 'blue' }} onClick={onForgotPassword}>
           Forgot Password?
-          </Typography>
+          </Typography> */}
 
             {isLoginForm && (
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2 }}>

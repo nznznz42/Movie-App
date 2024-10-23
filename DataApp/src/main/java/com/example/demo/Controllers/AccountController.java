@@ -48,6 +48,7 @@ public class AccountController {
         if (account == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+        System.out.println(account);
         return ResponseEntity.ok(account);
     }
 

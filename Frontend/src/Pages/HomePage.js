@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import HeroSection from '../Components/HeroSection';
 import ScrollableList from '../Components/ScrollableList';
 import axios from 'axios';
+import { useAuth } from '../Components/AuthContext';
 
-function HomePage({loginStatus}) {
+function HomePage() {
     const [upcomingMovies, setUpcomingMovies] = useState([]);
     const [topRatedMovies, setTopRatedMovies] = useState([]);
     const [popularMovies, setPopularMovies] = useState([]);
     const [nowPlayingMovies, setNowPlayingMovies] = useState([]);
-      const [error, setError] = useState(null);
+    const [error, setError] = useState(null);
+    const { currentUser, authToken, isPaidPlan } = useAuth();
+    const loginStatus = !!authToken;
     
       useEffect(() => {
         const getMovies = async () => {
@@ -28,11 +31,11 @@ function HomePage({loginStatus}) {
 
     return (
         <div>
-        <HeroSection loginStatus={loginStatus}/>
-        <ScrollableList header= "Top Rated" route={"top-rated"} movies={topRatedMovies}/>
-        <ScrollableList header= "Upcoming" route={"upcoming"} movies={upcomingMovies}/>
-        <ScrollableList header= "Popular" route={"popular"} movies={popularMovies}/>
-        <ScrollableList header= "Now Playing" route={"now-playing"} movies={nowPlayingMovies}/>
+        <HeroSection loginStatus={loginStatus} movies={topRatedMovies}/>
+        <ScrollableList header= "Top Rated" route={"top-rated"} movies={topRatedMovies} />
+        <ScrollableList header= "Upcoming" route={"upcoming"} movies={upcomingMovies} />
+        {isPaidPlan && (<ScrollableList header= "Popular" route={"popular"} movies={popularMovies} />)}
+        <ScrollableList header= "Now Playing" route={"now-playing"} movies={nowPlayingMovies} />
         </div>
     )
 };

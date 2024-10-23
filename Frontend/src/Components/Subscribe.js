@@ -73,7 +73,7 @@ const PlanButton = styled(Button)`
 `;
 
 const Subscribe = ({ isPaidPlan, setPaidPlan }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, authToken } = useAuth();
 
   const options = {
     key: "rzp_test_eLX6WS61npcEPJ",
@@ -100,7 +100,9 @@ const Subscribe = ({ isPaidPlan, setPaidPlan }) => {
 
   const createOrder = async () => {
     try {
-      const response = await axios.post('http://localhost:8081/account/create-order');
+      const response = await axios.post('http://localhost:8081/account/create-order', null, {headers: {
+        Authorization: `Bearer ${authToken}`
+      }});
       const orderid = response.data.id;
       return orderid;
     } catch (error) {
@@ -117,6 +119,9 @@ const Subscribe = ({ isPaidPlan, setPaidPlan }) => {
           orderID,
           signature,
         },
+        headers: {
+          Authorization: `Bearer ${authToken}`
+        }
       });
     } catch (error) {
       console.error("Error authenticating order:", error);
@@ -135,13 +140,21 @@ const Subscribe = ({ isPaidPlan, setPaidPlan }) => {
   };
 
   const cancelSubscription = async () => {
-    const response = await axios.get("http://localhost:8081/account/cancel-subscription", {
-      params: {
-        username: currentUser.username
-      },
-    });
-    setPaidPlan(false)
-  }
+    try {
+      const response = await axios.get("http://localhost:8081/account/cancel-subscription", {
+        params: {
+          username: currentUser.username
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`
+        }
+      });
+      setPaidPlan(false);
+    } catch (error) {
+      console.error("Error cancelling subscription:", error);
+    }
+  };
+  
 
   const onClickSubscribe = () => {
     subscribeToPaid(options);
@@ -181,7 +194,7 @@ const Subscribe = ({ isPaidPlan, setPaidPlan }) => {
           <Features>Video Quality: Best</Features>
           <Features>Resolution: 1080p</Features>
           <Features>Devices: TV, Mobile, Tablet</Features>
-          <Features>Features: Available Most Popular Movies</Features>
+          <Features>Features: Popular Movies</Features>
           <PlanButton variant="contained" onClick={onClickSubscribe}>
             {isPaidPlan ? "Current Plan" : "Subscribe Now"}
           </PlanButton>

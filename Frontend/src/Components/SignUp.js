@@ -1,7 +1,7 @@
 
 import styled from 'styled-components';
 import axios from 'axios';
-import { Button, TextField, Box } from "@mui/material";
+import { Button, TextField, Box, Snackbar, Alert } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useRef, useState } from "react";
 
@@ -50,9 +50,37 @@ export default function SignUp({ onSignUpSubmit }) {
   const [profileImageFile, setSelectedFile] = useState(null);
   const fileInput = useRef();
   const { register, handleSubmit, trigger, watch, formState: { errors } } = useForm();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const onSubmit = (data) => {
-    onSignUpSubmit(data, profileImageFile);
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+    setSnackbarOpen(false);
+};
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.get('http://localhost:8080/auth/signup/check', {
+        params: {
+          username: data.username,
+          email: data.email
+        }
+      });
+
+      if(response.status == 200) {
+        onSignUpSubmit(data, profileImageFile || null);
+      }
+    } catch (error) {
+        if (error.response && error.response.status === 409) {
+            setSnackbarMessage("Username/Email already taken");
+            setSnackbarOpen(true)
+        } else {
+            setSnackbarMessage("An error occurred");
+            setSnackbarOpen(true)
+        }
+    } 
   };
 
   const handleFileChange = () => {
@@ -117,6 +145,16 @@ export default function SignUp({ onSignUpSubmit }) {
           Sign Up
         </Button>
       </Box>
+      <Snackbar 
+                open={snackbarOpen} 
+                autoHideDuration={6000} 
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
     </Box>
   );
 }

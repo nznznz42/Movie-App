@@ -4,25 +4,17 @@ import { IconButton, Typography } from '@mui/material';
 import { ArrowForward, ArrowBack } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom'; 
 import SignUpModal from './SignUpModal';
+import { useAuth } from './AuthContext';
 
-function HeroSection({loginStatus}) {
-  const [movies, setMovies] = useState([]);
+function HeroSection({loginStatus, movies}) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const totalSlides = 3; 
+  const totalSlides = 3;
+  
   const [arrowColor, setArrowColor] = useState('white');
   const navigate = useNavigate(); 
 
-  const fetchTopRatedMovies = async () => {
-    try {
-      const response = await axios.get(`https://api.themoviedb.org/3/movie/top_rated?api_key=1b62e933598b34ff1679ac988fbb0dcc&language=en-US&page=1`);
-      setMovies(response.data.results.slice(0, totalSlides)); 
-    } catch (error) {
-      console.error('Error fetching top-rated movies:', error);
-    }
-  };
 
   useEffect(() => {
-    fetchTopRatedMovies();
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % totalSlides);
     }, 5000); 
@@ -51,7 +43,7 @@ function HeroSection({loginStatus}) {
           onClick={() => handleSlideClick(movie.id)} 
           style={{
             height: '100%',
-            backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie.backdrop_path})`,
+            backgroundImage: `url(https://image.tmdb.org/t/p/original/${movie.backdropPath})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             position: 'relative',
@@ -88,7 +80,7 @@ function HeroSection({loginStatus}) {
             maxWidth: '500px',  
             zIndex: 2 
           }}>
-            <Typography variant="h4" component="h2" style={{ color: 'white' }}>{movie.title}</Typography>
+            <Typography variant="h4" component="h2" style={{ color: 'white' }}>{movie.original_title}</Typography>
             <Typography variant="h6" style={{ color: 'white' }}>{movie.tagline}</Typography>
             <Typography variant="body1" style={{ color: 'white' }}>{movie.overview}
 

@@ -30,9 +30,9 @@ const ListPage = ({pagetype, genre, genreName}) => {
 
   useEffect(() => {
     if (genre || pagetype) {
-      fetchMovies(page);  // Trigger API call when page or genre/pagetype changes
+      fetchMovies(page);  
     }
-  }, [page, genre, pagetype]);  // Add genre and pagetype to dependency array
+  }, [page, genre, pagetype]); 
   
 
   const handleNextPage = () => {

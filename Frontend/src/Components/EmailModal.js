@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import CloseIcon from '@mui/icons-material/Close';
-import OTP from './OTP';
 import axios from 'axios';
-import { useAuth } from './AuthContext';
+import Email from './Email';
+import ChangePasswordOTP from './ChangePassword';
 
 const modalStyle = {
   position: 'fixed', 
@@ -32,45 +32,44 @@ const boxStyle = {
   overflow: 'auto', 
 };
 
-export default function OtpModal({ open, onClose, userData, profileImageFile }) {
-  const { authToken } = useAuth();
-  
-  useEffect(() => {
-    if (userData?.email) {
-      console.log('Sending OTP to:', userData.email);
-      sendOtp(userData.email);
-    }
-  }, [userData]);
+export default function EmailModal({ open, onClose }) {
+    const [open, setOpen] = React.useState(false);
+    const [otpOpen, setOtpOpen] = React.useState(false);
+    const [email, setEmail] = useState('')
 
-  const sendOtp = async (email) => {
-    try {
-      const response = await axios.post('http://localhost:8080/auth/signup/send-otp', null, {
-        params: { email: email },
-        headers: {
-          Authorization: `Bearer ${authToken}`
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const sendOtp = async (email) => {
+        try {
+        const response = await axios.post('http://localhost:8080/auth/signup/send-otp', null, {
+            params: { email: email }
+        });
+        console.log('OTP sent successfully to:', email);
+        setEmail(email)
+        } catch (error) {
+        console.error('Error sending OTP:', error);
         }
-      });
-      console.log('OTP sent successfully to:', email);
-    } catch (error) {
-      console.error('Error sending OTP:', error);
-    }
-  };
+    };
 
   return (
+    <div>
     <Modal open={open} onClose={onClose}>
       <Box sx={modalStyle}>
         <Box sx={boxStyle}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h6" sx={{ textAlign: 'center', flexGrow: 1 }}>
-              Verify OTP
+              Enter Email
             </Typography>
             <Button onClick={onClose}>
               <CloseIcon />
             </Button>
           </Box>
-          <OTP userData={userData} profileImageFile={profileImageFile} />
+          <Email sendOtp={sendOtp}/>
         </Box>
       </Box>
     </Modal>
+    <ChangePasswordOTP open={open} onClose={onClose} email={email} />
+    </div>
   );
 }

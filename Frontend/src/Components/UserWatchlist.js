@@ -3,10 +3,12 @@ import axios from 'axios';
 import MovieList from './MovieList';
 import { Typography, Paper, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'; 
+import { useAuth } from './AuthContext';
 
 const UserWatchlist = ({account}) => {
   const [watchlists, setWatchlists] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { authToken } = useAuth()
 
   useEffect(() => {
     if (account && account.watchlists) {
@@ -18,7 +20,10 @@ const UserWatchlist = ({account}) => {
   const handleDeleteWatchlist = async (watchlistName) => {
     try {
       await axios.get(`http://localhost:8081/account/delete-watchlist`, {
-        params: { username: account.username, watchlistName }
+        params: { username: account.username, watchlistName },
+        headers: {
+          Authorization: `Bearer ${authToken}`
+        }
       });
 
       setWatchlists((prevWatchlists) =>
@@ -37,6 +42,9 @@ const UserWatchlist = ({account}) => {
     try {
       await axios.get(`http://localhost:8081/account/delete-movie`, {
         params: { username: account.username, watchlistname: watchlistName, id: movieId },
+        headers: {
+          Authorization: `Bearer ${authToken}`
+        }
       });
 
       setWatchlists((prevWatchlists) =>

@@ -12,9 +12,7 @@ const SearchPage = () => {
   const { movieName } = useParams();
   const [searchParams] = useSearchParams();
 
-  // Extract optional year, language, and genres from the URL parameters
   const selectedYear = searchParams.get('year');
-  const selectedLanguage = searchParams.get('language');
   const selectedGenres = searchParams.get('genres') ? searchParams.get('genres').split(',').map(Number) : [];
   const orquery = searchParams.get("orQuery");
 
@@ -23,11 +21,10 @@ const SearchPage = () => {
       let response;
 
       if (selectedGenres.length > 0) {
-        // If genres are selected, use the /search/genres endpoint (POST)
         const requestBody = {
           query: movieName,
           genres: selectedGenres,
-          orQuery: orquery, // Assuming it's always a false query for now, can be made dynamic if needed
+          orQuery: orquery, 
           pageNumber: pageNumber,
         };
 
@@ -35,18 +32,13 @@ const SearchPage = () => {
         response = await axios.post('http://localhost:8081/search/genres', requestBody);
 
       } else {
-        // If no genres are selected, use the /searchForMovie endpoint (GET)
         const params = {
           query: movieName,
           page: pageNumber,
         };
 
-        // Only include year and language if they are present
         if (selectedYear) {
           params.year = selectedYear;
-        }
-        if (selectedLanguage) {
-          params.language = selectedLanguage;
         }
 
         console.log("Fetching without genres:", params);
@@ -66,7 +58,7 @@ const SearchPage = () => {
   useEffect(() => {
     setLoading(true);
     fetchSearchedMovies(page);
-  }, [page, movieName, selectedYear, selectedLanguage]);
+  }, [page, movieName, selectedYear]);
 
   const handleNextPage = () => {
     if (page < totalPages) {
@@ -86,7 +78,6 @@ const SearchPage = () => {
         <h1 style={{ color: 'white' }}>
           Showing results for "{movieName}"
           {selectedYear && ` in ${selectedYear}`}
-          {selectedLanguage && ` in ${selectedLanguage}`}
         </h1>
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>

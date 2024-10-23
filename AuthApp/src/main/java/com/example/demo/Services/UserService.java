@@ -16,4 +16,6 @@ public interface UserService {
     Optional<User> findByEmail(String username);
 
     User changeUserProfilePicture(String email, String filename);
+
+    User changePassword(String email, String password);
 }

@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-export default function Login({ loginStatus, loginToggle, onForgotPassword }) {
+export default function Login({ onForgotPassword }) {
   const { register, handleSubmit, formState: { errors }, trigger, reset } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -27,32 +27,30 @@ export default function Login({ loginStatus, loginToggle, onForgotPassword }) {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-
-  useEffect(() => {
-    console.log('Login status changed:', loginStatus);
-  }, [loginStatus]);
   
   const formData = async (data) => {
     try {
-      const response = await axios.post(`http://localhost:8080/auth/login`, data);
-      const token = response.data.token;
-      const user=response.data.user;
-      const pfpUrl = response.data.profileImageUrl.replace(/\s/g, '%20');
-      console.log(pfpUrl)
-      login(user, token, pfpUrl);
-      reset();
-      setSnackbarMessage('Login successful');
-      setSnackbarSeverity('success'); 
-      setSnackbarOpen(true);
-      loginToggle(true)
-      navigate('/');
-    } catch (error) {
-      console.error("Login error:", error);
-      if (error.response && error.response.status === 404) {
-        setSnackbarMessage('Invalid email or password');
+      const status = await login(data);
+
+      if (status === true) {
+        reset();
+        setSnackbarMessage('Login successful');
+        setSnackbarSeverity('success'); 
+        setSnackbarOpen(true);
+        navigate('/');
       } else {
-        setSnackbarMessage('An unexpected error occurred');
+        console.error("Login error:", status);
+        if (status.response && status.response.status === 404) {
+          setSnackbarMessage('Invalid email or password');
+        } else {
+          setSnackbarMessage('An unexpected error occurred');
+        }
+        setSnackbarSeverity('error'); 
+        setSnackbarOpen(true);
       }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      setSnackbarMessage('An unexpected error occurred');
       setSnackbarSeverity('error'); 
       setSnackbarOpen(true);
     }

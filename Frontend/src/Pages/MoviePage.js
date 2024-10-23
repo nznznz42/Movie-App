@@ -20,12 +20,15 @@ const MoviePage = () => {
   const [popupOpen, setPopupOpen] = useState(false);
   const [SimilarMovies, setSimilarMovies] = useState([])
   const [isPaidPlan, setIsPaidPlan] = useState(false); 
-  const { currentUser } = useAuth();
+  const { currentUser, authToken } = useAuth();
 
   const fetchAccountDetails = async (username) => {
      try {
       const response = await axios.get(`http://localhost:8081/account`, {
-        params: { username }
+        params: { username },
+        headers: {
+          Authorization: `Bearer ${authToken}`
+        }
       });
       
       if(response.data.subscriptionType === "PAID") {
@@ -68,7 +71,7 @@ const MoviePage = () => {
 
   useEffect(() => {
     fetchMovieDetails();
-  });
+  }, []);
 
   useEffect(() => {
     fetchSimilarMovies();
@@ -86,9 +89,7 @@ const MoviePage = () => {
 
   const handleCloseVideo = () => {
     setIsPlaying(false);
-    if (player) {
-      player.stopVideo();
-    }
+  
   };
 
   const onYouTubeIframeAPIReady = () => {

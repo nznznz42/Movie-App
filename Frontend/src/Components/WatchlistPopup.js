@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useAuth } from './AuthContext';
 
 const WatchlistPopup = ({ open, onClose, movieId }) => {
-    const { currentUser } = useAuth()
+    const { currentUser, authToken } = useAuth()
     const [watchlists, setWatchlists] = useState([]);
     const [newWatchlistName, setNewWatchlistName] = useState('');
     const [selectedWatchlists, setSelectedWatchlists] = useState({});
@@ -22,6 +22,10 @@ const WatchlistPopup = ({ open, onClose, movieId }) => {
         try {
             const response = await axios.get(`http://localhost:8081/account`, {
                 params: { username: currentUser.username }
+            }, {
+                headers: {
+                    Authorization: `Bearer ${authToken}`
+                }
             });
             setWatchlists(response.data.watchlists || []);
         } catch (error) {
@@ -52,6 +56,10 @@ const WatchlistPopup = ({ open, onClose, movieId }) => {
                         watchlistname: name,
                         id: movieId
                     }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    }
                 })
             ));
             setSuccessMessage('Movie added to selected watchlists!');
@@ -77,6 +85,10 @@ const WatchlistPopup = ({ open, onClose, movieId }) => {
                         username: currentUser.username,
                         watchlistName: newWatchlistName,
                     }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                    }
                 });
                 setNewWatchlistName(''); 
                 fetchWatchlists(); 
@@ -100,7 +112,10 @@ const WatchlistPopup = ({ open, onClose, movieId }) => {
                     params: {
                         username: currentUser.username,
                         watchlistName: name
-                    }
+                    },
+                    headers: {
+                        Authorization: `Bearer ${authToken}`
+                      }
                 })
             ));
             setSuccessMessage('Selected watchlists deleted successfully!');

@@ -7,7 +7,7 @@ import Alert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
-export default function OTP({ userData, profileImageFile }) {
+export default function ChangePasswordOTP(open, onClose, email) {
   const { register, handleSubmit, formState: { errors }, trigger, reset } = useForm();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -43,40 +43,8 @@ export default function OTP({ userData, profileImageFile }) {
     }
   };
 
-  const handleSignup = async (userData, profileImageFile) => {
-    const url = 'http://localhost:8080/auth/signup';
-    const formData = new FormData();
 
-    formData.append('username', userData.username);
-    formData.append('email', userData.email);
-    formData.append('password', userData.password);
-
-    if (profileImageFile) {
-      formData.append('profileImage', profileImageFile, profileImageFile.name);
-    }
-
-    try {
-      const response = await axios.post(url, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      showSnackbar("User created successfully", "success");
-      navigate("/");
-      reset();
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        showSnackbar("Username/Email already taken", "error");
-      } else if (error.response && error.response.status === 406) {
-        showSnackbar("Email already exists", "error");
-      } else {
-        console.error('Error during signup', error);
-        showSnackbar("Signup failed", "error");
-      }
-    }
-  };
-
-  const verifyOtpAndSignup = async (userData, otp, profileImageFile) => {
+  const verifyOtpAndChangePassword = async (email, otp) => {
     try {
       const otpResponse = await checkOTP(userData.email, otp);
 
@@ -111,6 +79,15 @@ export default function OTP({ userData, profileImageFile }) {
           error={!!errors.otp}
           helperText={errors.otp ? errors.otp.message : ""}
           onBlur={() => trigger('otp')}
+        />
+
+        <TextField
+          label="New Password"
+          variant="filled"
+          {...register("password", { required: "Password is required" })}
+          error={!!errors.password}
+          helperText={errors.password ? errors.password.message : ""}
+          onBlur={() => trigger('password')}
         />
 
         <Button

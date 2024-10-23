@@ -11,19 +11,18 @@ function Footer() {
         color: '#ccc', 
         padding: '20px 40px', 
         display: 'flex', 
-        flexDirection: { xs: 'column', sm: 'row' }, // Stack vertically below 700px, row on larger screens
-        justifyContent: { xs: 'center', sm: 'space-between' }, // Center on small screens
+        flexDirection: { xs: 'column', sm: 'row' }, 
+        justifyContent: { xs: 'center', sm: 'space-between' }, 
         alignItems: 'center',
         fontSize: '14px'
       }}
     >
-      {/* Social media icons */}
       <Box 
         sx={{ 
           display: 'flex', 
           alignItems: 'center', 
           gap: '15px', 
-          marginBottom: { xs: '20px', sm: '0' }, // Add margin below icons on small screens
+          marginBottom: { xs: '20px', sm: '0' }, 
         }}
       >
         <Link href="#" sx={{ color: '#ccc', textDecoration: 'none' }}>
@@ -40,8 +39,7 @@ function Footer() {
         </Link>
       </Box>
 
-      {/* Footer text with links */}
-      <Box sx={{ textAlign: { xs: 'center', sm: 'right' }, width: '100%' }}> {/* Center text on small screens */}
+      <Box sx={{ textAlign: { xs: 'center', sm: 'right' }, width: '100%' }}> 
         <Typography sx={{ color: '#ccc', marginBottom: '5px' }}>
           © 2024 Muzix.com, Inc. All rights reserved.
         </Typography>

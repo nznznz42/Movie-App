@@ -3,42 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { useAuth } from './AuthContext';
 import WatchlistPopup from '../Components/WatchlistPopup';
-import axios from 'axios';
+import { useAuth } from './AuthContext';
 
 function MovieCard({ movie, onDelete }) {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const containerHeight = onDelete ? '150px' : '300px';
   const containerWidth = onDelete ? '100px' : '200px';
-  const [isPaidPlan, setIsPaidPlan] = useState(false);
-  const [popupOpen, setPopupOpen] = useState(false); 
-  const { currentUser } = useAuth();
-
-  const fetchAccountDetails = async (username) => {
-    try {
-     const response = await axios.get(`http://localhost:8081/account`, {
-       params: { username }
-     });
-     
-     if(response.data.subscriptionType === "PAID") {
-       setIsPaidPlan(true)
-     }} catch (err) {
-       console.log("not logged in")
-     }
- };
-
-  useEffect(() => {
-    if (currentUser) {
-      fetchAccountDetails(currentUser.username);
-    }
-  }, [currentUser]);
-  
-
+  const [popupOpen, setPopupOpen] = useState(false);
+  const { authToken, isPaidPlan } = useAuth();
+  const loginStatus = !!authToken 
 
   const handleClick = () => {
-    navigate(`/movie/${movie.id}`); 
+    if(loginStatus){navigate(`/movie/${movie.id}`);} 
   };
 
   return (
@@ -108,7 +86,7 @@ function MovieCard({ movie, onDelete }) {
               <DeleteIcon />
             </IconButton>
           )}
-          {(isPaidPlan && !onDelete) && (<IconButton 
+          {(loginStatus && (isPaidPlan && !onDelete)) && (<IconButton 
                   className="add-button"
                   onClick={(e) => {
                     e.stopPropagation();

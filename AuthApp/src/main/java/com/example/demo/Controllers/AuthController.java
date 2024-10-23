@@ -40,20 +40,24 @@ public class AuthController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam("profileImage") MultipartFile profileImage) throws IOException, EmailAlreadyExistingException {
-
-        System.out.println("username:" + username + "email:" + email + "pass:" + password + "imageName" + profileImage.getOriginalFilename());
-        String profileImageFileName = fileService.saveProfileImage(profileImage);
+    public ResponseEntity<?> signup(@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("password") String password, @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws IOException, EmailAlreadyExistingException {
         User user = new User();
         user.setEmail(email);
         user.setUsername(username);
         user.setPassword(password);
-        user.setProfileImageFileName(profileImageFileName);
+
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String profileImageFileName = fileService.saveProfileImage(profileImage);
+            System.out.println("Image Name: " + profileImage.getOriginalFilename());
+            user.setProfileImageFileName(profileImageFileName);
+        } else {
+            System.out.println("No profile image provided");
+            user.setProfileImageFileName(null);
+        }
 
         User newUser = userService.addUser(user);
         dataAppService.createNewAccountOnDataApp(username, email);
         return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully");
-
     }
 
 
@@ -80,6 +84,15 @@ public class AuthController {
         Optional<User> existingUsername = userService.findByUsername(username);
         Optional<User> existingEmail = userService.findByEmail(email);
         if (existingUsername.isPresent() || existingEmail.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username/Email already taken");
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<?> checkIfUserExists(@RequestParam String email) {
+        Optional<User> existingEmail = userService.findByEmail(email);
+        if (existingEmail.isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username/Email already taken");
         }
         return ResponseEntity.ok().build();
@@ -126,6 +139,11 @@ public class AuthController {
         String filename = fileService.saveProfileImage(profileImage);
         User user = userService.changeUserProfilePicture(email, filename);
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestParam("email") String email, @RequestParam("password") String password) {
+        return ResponseEntity.ok(userService.changePassword(email, password));
     }
 
     @GetMapping("/warm-up")

@@ -11,12 +11,12 @@ export default function Profile() {
   const [account, setAccount] = useState(null);
   const [error, setError] = useState(null);
   const [isPaidPlan, setIsPaidPlan] = useState(false);
-  const { currentUser } = useAuth();
+  const { currentUser, authToken } = useAuth();
 
   const fetchAccountDetails = async (username) => {
     try {
       const response = await axios.get(`http://localhost:8081/account`, {
-        params: { username }
+        params: { username },
       });
       setAccount(response.data);
       if(response.data.subscriptionType == "PAID") {
@@ -35,6 +35,8 @@ export default function Profile() {
 
   useEffect(() => {
     fetchAccountDetails(currentUser.username)
+    console.log(currentUser.username)
+    console.log(account)
   }, [currentUser.username])
 
   const handleSectionChange = (section) => {

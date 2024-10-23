@@ -6,12 +6,14 @@ import ProfileIcon from './ProfileIcon';
 import MenuIcon from '@mui/icons-material/Menu'; 
 import { useNavigate } from 'react-router-dom';
 import SearchFilter from './SearchFilter';
+import { useAuth } from './AuthContext';
 
 
-function Header({loginStatus, loginToggle, genres, languages}) {
+function Header({ genres, languages}) {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
-
+  const { authToken } = useAuth();
+  const loginStatus = !!authToken
   const HandleLogoClick = () => {
     navigate('/');
   };
@@ -51,7 +53,7 @@ function Header({loginStatus, loginToggle, genres, languages}) {
           <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: '5px' }}>
             <SearchFilter genres={genres} languages={languages}/>
             <SearchIcon onClick={handleSearchClick} sx={{ cursor: 'pointer' }} />
-            {!loginStatus ? <LoginFormModal loginStatus={loginStatus} loginToggle={loginToggle} /> : <ProfileIcon loginToggle={loginToggle}/>}
+            {!loginStatus ? <LoginFormModal /> : <ProfileIcon />}
           </Box>
         </Toolbar>
       </AppBar>
@@ -71,7 +73,7 @@ function Header({loginStatus, loginToggle, genres, languages}) {
           <Box sx={{ p: 2 }}>
             <SearchFilter genres={genres} languages={languages}/>
             <SearchIcon onClick={handleSearchClick} sx={{ cursor: 'pointer' }} />
-            {!loginStatus ? <LoginFormModal loginStatus={loginStatus} loginToggle={loginToggle} /> : <ProfileIcon loginToggle={loginToggle} />}
+            {!loginStatus ? <LoginFormModal  /> : <ProfileIcon  />}
           </Box>
         </Box>
       </Drawer>
