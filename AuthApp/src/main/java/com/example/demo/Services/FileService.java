@@ -24,15 +24,12 @@ public class FileService {
         File uploadFile = new File(imageDir + fileName);
 
         if (uploadFile.exists()) {
-            System.out.println("File already exists, generating a new name.");
             fileName = UUID.randomUUID() + "_" + profileImage.getOriginalFilename();
             uploadFile = new File(imageDir + fileName);
         }
 
         try {
-            System.out.println("Transferring file to: " + uploadFile.getAbsolutePath());
             profileImage.transferTo(uploadFile.toPath().normalize());
-            System.out.println("File saved successfully: " + uploadFile.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error while saving the profile image: " + e.getMessage());
             throw e;

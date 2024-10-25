@@ -42,7 +42,6 @@ public class DataAppService {
             HttpEntity<Map<String, String>> request = new HttpEntity<>(jwtToken, headers);
 
             restTemplate.postForEntity(url, request, String.class);
-            System.out.println("Token sent to external app.");
         } catch (Exception e) {
             System.out.println("Failed to send token to external app: " + e.getMessage());
         }

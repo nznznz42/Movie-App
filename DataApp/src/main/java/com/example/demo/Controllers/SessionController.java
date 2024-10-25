@@ -30,7 +30,6 @@ public class SessionController {
         String token = tokenPayload.get("token");
         if (token != null && !token.isEmpty()) {
             tokenStore.remove(token);
-            System.out.println("Token deregistered");
             return ResponseEntity.ok("Token deregistered successfully");
         }
         return ResponseEntity.badRequest().body("Invalid token");

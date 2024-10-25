@@ -33,7 +33,6 @@ public class JwtFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
-            return;
         } else {
             String token = authHeader.substring(7);
             if (!sessionController.getTokenStore().contains(token)) {

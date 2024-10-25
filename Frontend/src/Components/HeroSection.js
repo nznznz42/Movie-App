@@ -9,7 +9,6 @@ import { useAuth } from './AuthContext';
 function HeroSection({loginStatus, movies}) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = 3;
-  
   const [arrowColor, setArrowColor] = useState('white');
   const navigate = useNavigate(); 
 
@@ -31,7 +30,9 @@ function HeroSection({loginStatus, movies}) {
   };
 
   const handleSlideClick = (id) => {
-    navigate(`/movie/${id}`); 
+    if(loginStatus) {
+      navigate(`/movie/${id}`); 
+    }
   };
 
   return (

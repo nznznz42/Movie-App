@@ -48,10 +48,8 @@ public class AuthController {
 
         if (profileImage != null && !profileImage.isEmpty()) {
             String profileImageFileName = fileService.saveProfileImage(profileImage);
-            System.out.println("Image Name: " + profileImage.getOriginalFilename());
             user.setProfileImageFileName(profileImageFileName);
         } else {
-            System.out.println("No profile image provided");
             user.setProfileImageFileName(null);
         }
 
@@ -106,7 +104,6 @@ public class AuthController {
         emailData.setMessageBody("Your One Time Password is: " + OTP);
         emailData.setSubject("One Time Password");
         emailService.sendEmail(emailData);
-        System.out.println(emailData);
         return ResponseEntity.ok().body(null);
     }
 
@@ -116,7 +113,6 @@ public class AuthController {
         if (!checkFlag) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect OTP");
         } else {
-            System.out.println("Successful OTP");
             otpService.revokeOtp(otpRequest.getEmail());
             return ResponseEntity.ok().body(Map.of("success", true));
         }
@@ -128,7 +124,6 @@ public class AuthController {
         System.out.println("Incoming payload: " + tokenPayload);
         if (tokenPayload != null && !tokenPayload.isEmpty()) {
             dataAppService.deregisterSession(tokenPayload);
-            System.out.println("Token sent to product");
             return ResponseEntity.ok("Token deregistered successfully");
         }
         return ResponseEntity.badRequest().body("Invalid token");

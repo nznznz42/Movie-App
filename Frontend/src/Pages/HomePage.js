@@ -38,7 +38,7 @@ function HomePage() {
         <ScrollableList header= "Now Playing" route={"now-playing"} movies={nowPlayingMovies} />
         </div>
     )
-};
+}
 
 
 async function fetchMoviesForHomePage() {

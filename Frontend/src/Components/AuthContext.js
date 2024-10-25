@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
       const token = response.data.token;
       const user=response.data.user;
       const pfpUrl = response.data.profileImageUrl.replace(/\s/g, '%20');
-      console.log(user)
       setlogin(user, token, pfpUrl);
       fetchAccountDetails(user.username)
       return true

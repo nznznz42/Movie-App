@@ -48,7 +48,6 @@ public class AccountController {
         if (account == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        System.out.println(account);
         return ResponseEntity.ok(account);
     }
 
@@ -104,7 +103,6 @@ public class AccountController {
 
             Order order = client.orders.create(orderRequest);
             setOrderCache(order);
-            System.out.println(order);
             return ResponseEntity.ok(order.toString());
         } catch (RazorpayException e) {
             System.err.println("Error creating Razorpay order: " + e.getMessage());
@@ -126,7 +124,6 @@ public class AccountController {
             options.put("razorpay_signature", signature);
 
             Boolean status = Utils.verifyPaymentSignature(options, rzpaySecret);
-            System.out.println(status);
 
             if (status) {
                 System.out.println("Payment Successful");

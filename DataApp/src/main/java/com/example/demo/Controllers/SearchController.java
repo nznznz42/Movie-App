@@ -39,7 +39,6 @@ public class SearchController {
 
         CompletableFuture<List<CMovie>> movies = searchService.searchByGenre(query, genres, orQuery, page);
         CompletableFuture.allOf(movies).join();
-        System.out.println(movies.get());
 
         return ResponseEntity.ok(movies.get());
     }
